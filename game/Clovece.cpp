@@ -52,8 +52,9 @@ bool Clovece::moveFigure(Figure* figure, int amount, bool test) {
         if (!test) {
             std::cout << "  Figure is still home" << std::endl;
         }
-        if (amount == 6) { // roll was six figure can move out
+        if (amount >= 6) { // roll was six figure can move out
             current = board->getStart(figure->getPlayer());
+            amount -= 6;
         } else {
             if (!test) {
                 std::cout << "  Roll wasnt 6 so figure cant go out of home" << std::endl;
@@ -62,14 +63,15 @@ bool Clovece::moveFigure(Figure* figure, int amount, bool test) {
             }
             return false; // to move out of home you need to roll 6
         }
-    } else {
-        for (int i = 0; i < amount; i++) {
-            if (current == nullptr) {
-                return false; // no space to move to
-            }
-            current = current->getNext(figure->getPlayer());
-        }
     }
+
+    for (int i = 0; i < amount; i++) {
+        if (current == nullptr) {
+            return false; // no space to move to
+        }
+        current = current->getNext(figure->getPlayer());
+    }
+
 
     if (current == nullptr) {
         if (!test) {
@@ -115,8 +117,6 @@ bool Clovece::moveFigure(Figure* figure, int amount, bool test) {
 
 void Clovece::doTurn() {
     std::cout << "Player " << onTurn->getId() << " is on turn." << std::endl;
-    // TODO: rolling more times if roll was six
-    // TODO: If roll was six player must take out a figure from home and roll again
     int roll = rollDice();
     std::cout << "  Roll was " << roll << std::endl;
     if (isHome(onTurn) && roll != 6) {
@@ -131,9 +131,10 @@ void Clovece::doTurn() {
     }
     if (roll == 6) {
         // do a second roll
-        // if the player has anyone home he has to get him out (except when start field is occupied)
-        // do a return
-        // otherwise continue normally
+        std::cout << "  Since roll was 6 rolling again" << std::endl;
+        int roll2 = rollDice();
+        roll += roll2;
+        std::cout << "  Roll was " << roll2 << ", total is " << roll << std::endl;
     }
     // if player has any moves make him select (show wich figures can move)
 
@@ -203,7 +204,7 @@ bool Clovece::hasMoves(int rolled) {
 
 bool Clovece::hasMoves(Figure* figure, int rolled) {
     if (isHome(figure)) {
-        if (rolled == 6) {
+        if (rolled >= 6) {
             return true;
         }
     } else {

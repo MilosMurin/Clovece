@@ -16,13 +16,6 @@ Circle::Circle(Type type, Function special) : type(type), function(special) {
 
 }
 
-Circle::~Circle() {
-    if (figure != nullptr) {
-        delete figure;
-        figure = nullptr;
-    }
-}
-
 Type Circle::getType() const {
     return type;
 }

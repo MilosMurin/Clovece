@@ -38,7 +38,6 @@ public:
     Circle();
     explicit Circle(int num);
     Circle(Type type, Function special);
-    ~Circle();
 
     Type getType() const;
 
