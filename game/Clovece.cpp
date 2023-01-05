@@ -7,6 +7,10 @@ using namespace std;
 Clovece::Clovece(mt19937 mt) : mt(mt), board(new Board()) {
 }
 
+Clovece::~Clovece() {
+    delete board;
+}
+
 void Clovece::addPlyer(Player* player) {
     int i = 0;
     for (; i < 4; i++) {
@@ -125,38 +129,27 @@ void Clovece::doTurn() {
             }
         }
     }
+    if (roll == 6) {
+        // do a second roll
+        // if the player has anyone home he has to get him out (except when start field is occupied)
+        // do a return
+        // otherwise continue normally
+    }
+    // if player has any moves make him select (show wich figures can move)
+
+
     if (hasMoves(roll)) {
-        std::cout << "  Choose a figure to move" << std::endl;
-        int f = 0;
-        cin >> f;
+        // move this to a method
+        int f = getFigureToMove();
         if (f == -1) {
-            running = false;
             return;
-        }
-        while (f > 4 || f < 0) {
-            std::cout << "  Invalid figure id. Try again." << std::endl;
-            cin >> f;
-            if (f == -1) {
-                running = false;
-                return;
-            }
         }
         Figure* figure = onTurn->getFigure(f - 1);
         while (!hasMoves(figure, roll)) {
             std::cout << "  Figure" << figure->getId() << " has no moves" << std::endl;
-            std::cout << "  Choose a figure to move" << std::endl;
-            cin >> f;
+            f = getFigureToMove();
             if (f == -1) {
-                running = false;
                 return;
-            }
-            while (f > 4 || f < 0) {
-                std::cout << "  Invalid figure id. Try again." << std::endl;
-                cin >> f;
-                if (f == -1) {
-                    running = false;
-                    return;
-                }
             }
             figure = onTurn->getFigure(f - 1);
         }
@@ -177,6 +170,25 @@ void Clovece::doTurn() {
     } else {
         onTurn = players[p];
     }
+}
+
+int Clovece::getFigureToMove() {
+    std::cout << "  Choose a figure to move" << std::endl;
+    int f = 0;
+    cin >> f;
+    if (f == -1) {
+        running = false;
+        return f;
+    }
+    while (f > 4 || f < 0) {
+        std::cout << "  Invalid figure id. Try again." << std::endl;
+        cin >> f;
+        if (f == -1) {
+            running = false;
+            return f;
+        }
+    }
+    return f;
 }
 
 bool Clovece::hasMoves(int rolled) {

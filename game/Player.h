@@ -14,6 +14,7 @@ private:
 public:
     explicit Player(int id);
     Player(int id, std::string name);
+    ~Player();
 
     const string& getName() const;
 

@@ -13,6 +13,12 @@ Player::Player(int id, std::string name) : id(id), name(std::move(name)) {
     }
 }
 
+Player::~Player() {
+    for (auto& figure: figures) {
+        delete figure;
+    }
+}
+
 
 const string& Player::getName() const {
     return name;

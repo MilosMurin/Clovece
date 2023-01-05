@@ -16,6 +16,8 @@ private:
 public:
     explicit Clovece(std::mt19937 mt);
 
+    ~Clovece();
+
     void addPlyer(Player* player);
 
     void setup();
@@ -30,6 +32,8 @@ public:
      * @return true if move is possible
      */
     bool moveFigure(Figure* figure, int amount, bool test);
+
+    int getFigureToMove();
 
     void doTurn();
 

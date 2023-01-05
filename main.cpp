@@ -23,7 +23,7 @@ int main() {
         clovece->doTurn();
     }
 
-    std::cout << "" << std::endl;
+    std::cout << "Ending program" << std::endl;
 
     delete clovece;
     delete p1;
