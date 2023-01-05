@@ -9,4 +9,6 @@ add_executable(Clovece main.cpp
         game/borad/Figure.cpp game/borad/Figure.h
         game/Clovece.cpp game/Clovece.h
         game/Player.cpp game/Player.h
+        game/network/Move.cpp game/network/Move.h
+        game/network/Connection.cpp game/network/Connection.h
         )

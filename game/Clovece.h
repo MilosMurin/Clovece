@@ -2,6 +2,7 @@
 
 #include "borad/Board.h"
 #include "Player.h"
+#include "network/Move.h"
 
 class Clovece {
 
@@ -25,7 +26,6 @@ public:
     int rollDice();
 
     /**
-     *
      * @param figure the figure to move
      * @param amount rolled amount
      * @param test true - does not actually move the figure
@@ -33,7 +33,12 @@ public:
      */
     bool moveFigure(Figure* figure, int amount, bool test);
 
-    int getFigureToMove();
+    bool moveFigure(Move move);
+
+    /**
+     * @param bot if true it automatically chooses the first figure that can move, if false it lets the player choose through console
+     */
+    int getFigureToMove(bool bot, int roll);
 
     void doTurn();
 
@@ -50,4 +55,6 @@ public:
     bool isEnd(Player* player);
 
     bool isRunning() const;
+
+    Figure* getFigure(Move move);
 };
