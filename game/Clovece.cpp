@@ -37,13 +37,6 @@ int Clovece::rollDice() {
     return dice(mt);
 }
 
-/**
- *
- * @param figure the figure to move
- * @param amount rolled amount
- * @param test true - does not actually move the figure
- * @return true if move is possible
- */
 bool Clovece::moveFigure(Figure* figure, int amount, bool test) {
     if (!test) {
         std::cout << "  Player is trying to move figure " << figure->getName() << std::endl;
@@ -59,6 +52,8 @@ bool Clovece::moveFigure(Figure* figure, int amount, bool test) {
         } else {
             if (!test) {
                 std::cout << "  Roll wasnt 6 so figure cant go out of home" << std::endl;
+            } else {
+                std::cout << "--Roll wasnt 6 so figure cant go out of home" << std::endl;
             }
             return false; // to move out of home you need to roll 6
         }
@@ -74,6 +69,8 @@ bool Clovece::moveFigure(Figure* figure, int amount, bool test) {
     if (current == nullptr) {
         if (!test) {
             std::cout << "  No circle found at that distance" << std::endl;
+        } else {
+            std::cout << "--No circle found at that distance" << std::endl;
         }
         return false;
     }
@@ -81,17 +78,15 @@ bool Clovece::moveFigure(Figure* figure, int amount, bool test) {
     if (fig != nullptr) { // circle is occupied
         if (!test) {
             std::cout << "  Circle is occupied";
+        } else {
+            std::cout << "--Circle is occupied";
         }
         if (fig->getPlayer() == figure->getPlayer()) {
-            if (!test) {
-                std::cout << " by a figure of the same color" << std::endl;
-            }
+            std::cout << " by a figure of the same color" << std::endl;
             // unable to move there because it is occupied by a figure with the same color
             return false;
         } else {
-            if (!test) {
-                std::cout << " by a figure of an opposng color" << std::endl;
-            }
+            std::cout << " by a figure of an opposng color" << std::endl;
             // kick opposing player out
             return false; // return true when fixed
         }
@@ -112,6 +107,7 @@ bool Clovece::doTurn() {
     std::cout << "Player " << onTurn->getId() << " is on turn." << std::endl;
     int roll = rollDice();
     std::cout << "  Roll was " << roll << std::endl;
+    // TODO: If all figures home roll 3x to try to get 6
     if (hasMoves(roll)) {
         std::cout << "  Choose a figure to move" << std::endl;
         int f = 0;
@@ -119,19 +115,36 @@ bool Clovece::doTurn() {
         if (f == -1) {
             return false;
         }
-        Figure* figure = onTurn->getFigure(f - 1);
-        while (!hasMoves(figure, roll)) {
-            std::cout << "  That figure has no moves" << std::endl;
-            std::cout << "  Choose a figure to move" << std::endl;
+        while (f > 4 || f < 0) {
+            std::cout << "  Invalid figure id. Try again." << std::endl;
             cin >> f;
             if (f == -1) {
                 return false;
             }
         }
+        Figure* figure = onTurn->getFigure(f - 1);
+        while (!hasMoves(figure, roll)) {
+            std::cout << "  Figure" << figure->getId() << " has no moves" << std::endl;
+            std::cout << "  Choose a figure to move" << std::endl;
+            cin >> f;
+            if (f == -1) {
+                return false;
+            }
+            while (f > 4 || f < 0) {
+                std::cout << "  Invalid figure id. Try again." << std::endl;
+                cin >> f;
+                if (f == -1) {
+                    return false;
+                }
+            }
+            figure = onTurn->getFigure(f - 1);
+        }
         moveFigure(figure, roll, false);
+        this->board->print();
     } else {
         std::cout << "  Player " << onTurn->getId() << " has no moves." << std::endl;
     }
+    // TODO: Win condition
     // set the next player on turn
     int p = onTurn->getId();
     if (p == 4) {

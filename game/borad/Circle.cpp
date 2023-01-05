@@ -70,49 +70,8 @@ Circle* Circle::getNext(int player) {
     return this->next;
 }
 
-std::string Circle::toString() {
-    std::string o;
-    switch (this->type) {
-        case NOTHING:
-            return "   ";
-        case NUETRAL:
-            return "...";
-        case P_ONE:
-            o = "p1";
-            break;
-        case P_TWO:
-            o = "p2";
-            break;
-        case P_THREE:
-            o = "p3";
-            break;
-        case P_FOUR:
-            o = "p4";
-            break;
-    }
-
-    switch (this->function) {
-        case EMPTY:
-            return "   ";
-        case HOME:
-            o += "h";
-            break;
-        case START:
-            o += "s";
-            break;
-        case END:
-            o += "e";
-            break;
-    }
-    return o;
-}
-
 int Circle::getPlayer() {
     return this->type - 1;
-}
-
-Circle* Circle::createCicle() {
-    return new Circle(NUETRAL, EMPTY);
 }
 
 void Circle::setPosition(int x, int y) {
@@ -128,67 +87,102 @@ int Circle::getY() const {
     return y;
 }
 
-std::string Circle::getPointing() {
-    string s = " . ";
-    // main route
-    int direction;
+string Circle::getLine(int index) {
+    string s = "     ";
+    if (this->type == NOTHING) {
+        return s;
+    }
+    int direction = 0;
     if (next != nullptr) {
         if (x > next->getX()) {
-            direction = 1;
+            direction = 1; // up ^
         } else if (x < next->getX()) {
-            direction = 3;
+            direction = 3; // down v
         } else {
             if (y > next->getY()) {
-                direction = 4;
+                direction = 4; // left <
             } else {
-                direction = 2;
+                direction = 2; // right >
             }
-        }
-        switch (direction) {
-            case 1:
-                s[1] = '^';
-                break;
-            case 2:
-                s[1] = '>';
-                break;
-            case 3:
-                s[1] = 'v';
-                break;
-            case 4:
-                s[1] = '<';
-                break;
-            default:
-                break;
         }
     }
+    int homeDirection = 0;
     if (toHome != nullptr) {
         if (x > toHome->getX()) {
-            direction = 1;
+            homeDirection = 1; // up ^
         } else if (x < toHome->getX()) {
-            direction = 3;
+            homeDirection = 3; // down v
         } else {
             if (y > toHome->getY()) {
-                direction = 4;
+                homeDirection = 4; // left <
             } else {
-                direction = 2;
+                homeDirection = 2; // right >
             }
         }
-        switch (direction) {
-            case 1:
+    }
+
+    switch (index) {
+        case 1: // line one
+            switch (this->type) {
+                case NUETRAL:
+                    s[0] = '/';
+                    s[3] = '\\';
+                    break;
+                default:
+                    s[0] = static_cast<char>(this->type - 1 + 48);
+                    switch (this->function) {
+                        case EMPTY:
+                            return "    ";
+                        case HOME:
+                            s[3] = 'h';
+                            break;
+                        case START:
+                            s[3] = 's';
+                            break;
+                        case END:
+                            s[3] = 'e';
+                            break;
+                    }
+                    break;
+            }
+            if (direction == 1 || homeDirection == 1) {
+                s[1] = '^';
                 s[2] = '^';
-                break;
-            case 2:
-                s[2] = '>';
-                break;
-            case 3:
+            } else {
+                s[1] = '-';
+                s[2] = '-';
+            }
+            break;
+        case 2:
+
+            if (this->hasFigure()) {
+                s[1] = static_cast<char>(this->figure->getPlayer() + 48);
+                s[2] = static_cast<char>(this->figure->getId() + 48);
+            }
+            if (direction == 2 || homeDirection == 2) {
+                s[3] = '>';
+            } else {
+                s[3] = '|';
+            }
+            if (direction == 4 || homeDirection == 4) {
+                s[0] = '<';
+            } else {
+                s[0] = '|';
+            }
+            break;
+        case 3:
+            s[0] = '\\';
+            s[3] = '/';
+            if (direction == 3 || homeDirection == 3) {
+                s[1] = 'v';
                 s[2] = 'v';
-                break;
-            case 4:
-                s[2] = '<';
-                break;
-            default:
-                break;
-        }
+            } else {
+                s[1] = '_';
+                s[2] = '_';
+            }
+            break;
+        default:
+            return s;
     }
     return s;
 }

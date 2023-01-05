@@ -21,6 +21,13 @@ public:
 
     int rollDice();
 
+    /**
+     *
+     * @param figure the figure to move
+     * @param amount rolled amount
+     * @param test true - does not actually move the figure
+     * @return true if move is possible
+     */
     bool moveFigure(Figure* figure, int amount, bool test);
 
     bool doTurn();

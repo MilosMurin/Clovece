@@ -61,17 +61,12 @@ Board::~Board() {
 
 void Board::print() {
     for (auto& i: board) {
-        for (auto& j: i) {
-            std::cout << j->toString();
+        for (int j = 1; j < 4; j++) {
+            for (auto& k: i) {
+                std::cout << k->getLine(j);
+            }
+            std::cout << std::endl;
         }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-    for (auto& i: board) {
-        for (auto& j: i) {
-            std::cout << j->getPointing();
-        }
-        std::cout << std::endl;
     }
 }
 

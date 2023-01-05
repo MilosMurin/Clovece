@@ -54,17 +54,13 @@ public:
 
     Circle* getNext(int player);
 
-    std::string toString();
-
     int getPlayer();
 
     void setPosition(int x, int y);
-
-    static Circle* createCicle(); // Creates an empty playable circle
 
     int getX() const;
 
     int getY() const;
 
-    std::string getPointing();
+    string getLine(int index);
 };

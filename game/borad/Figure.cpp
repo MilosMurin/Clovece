@@ -30,3 +30,7 @@ void Figure::setCircle(int x, int y) {
     this->x = x;
     this->y = y;
 }
+
+int Figure::getId() const {
+    return id;
+}
