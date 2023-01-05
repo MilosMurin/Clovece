@@ -74,4 +74,6 @@ public:
     Circle* getHome(int player, int id);
 
     bool isHome(Circle* circle);
+
+    bool isEnd(int player, Circle* circle);
 };

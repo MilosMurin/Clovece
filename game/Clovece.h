@@ -11,6 +11,7 @@ private:
     Player* onTurn = nullptr;
     std::mt19937 mt;
     uniform_int_distribution<int> dice{1, 6};
+    bool running = false;
 
 public:
     explicit Clovece(std::mt19937 mt);
@@ -30,7 +31,7 @@ public:
      */
     bool moveFigure(Figure* figure, int amount, bool test);
 
-    bool doTurn();
+    void doTurn();
 
     bool hasMoves(int rolled);
 
@@ -39,4 +40,10 @@ public:
     bool isHome(Figure* figure);
 
     bool isHome(Player* player);
+
+    bool isEnd(Figure* figure);
+
+    bool isEnd(Player* player);
+
+    bool isRunning() const;
 };

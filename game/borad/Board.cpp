@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include "Board.h"
 
 Board::Board() {
@@ -84,10 +85,19 @@ Circle* Board::getHome(int player, int id) {
 
 bool Board::isHome(Circle* circle) {
     for (auto& home: homes) {
-        for (auto& j: home) {
+        for (auto j: home) {
             if (j == circle) {
                 return true;
             }
+        }
+    }
+    return false;
+}
+
+bool Board::isEnd(int player, Circle* circle) {
+    for (auto item : ends[player - 1]) {
+        if (item == circle) {
+            return true;
         }
     }
     return false;

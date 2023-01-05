@@ -19,10 +19,8 @@ int main() {
 
     clovece->setup();
 
-    while (true) {
-        if (!clovece->doTurn()) {
-            break;
-        }
+    while (clovece->isRunning()) {
+        clovece->doTurn();
     }
 
     std::cout << "" << std::endl;

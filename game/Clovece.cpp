@@ -30,6 +30,7 @@ void Clovece::setup() {
             board->getHome(player->getId(), i)->setFigure(player->getFigure(i));
         }
     }
+    running = true;
     board->print();
 }
 
@@ -108,11 +109,13 @@ bool Clovece::moveFigure(Figure* figure, int amount, bool test) {
 
 }
 
-bool Clovece::doTurn() {
+void Clovece::doTurn() {
     std::cout << "Player " << onTurn->getId() << " is on turn." << std::endl;
+    // TODO: rolling more times if roll was six
+    // TODO: If roll was six player must take out a figure from home and roll again
     int roll = rollDice();
     std::cout << "  Roll was " << roll << std::endl;
-    if (isHome(onTurn)) {
+    if (isHome(onTurn) && roll != 6) {
         for (int i = 0; i < 2; i++) {
             std::cout << "  Player has all figures home rolling again." << std::endl;
             roll = rollDice();
@@ -127,13 +130,15 @@ bool Clovece::doTurn() {
         int f = 0;
         cin >> f;
         if (f == -1) {
-            return false;
+            running = false;
+            return;
         }
         while (f > 4 || f < 0) {
             std::cout << "  Invalid figure id. Try again." << std::endl;
             cin >> f;
             if (f == -1) {
-                return false;
+                running = false;
+                return;
             }
         }
         Figure* figure = onTurn->getFigure(f - 1);
@@ -142,13 +147,15 @@ bool Clovece::doTurn() {
             std::cout << "  Choose a figure to move" << std::endl;
             cin >> f;
             if (f == -1) {
-                return false;
+                running = false;
+                return;
             }
             while (f > 4 || f < 0) {
                 std::cout << "  Invalid figure id. Try again." << std::endl;
                 cin >> f;
                 if (f == -1) {
-                    return false;
+                    running = false;
+                    return;
                 }
             }
             figure = onTurn->getFigure(f - 1);
@@ -158,7 +165,11 @@ bool Clovece::doTurn() {
     } else {
         std::cout << "  Player " << onTurn->getId() << " has no moves." << std::endl;
     }
-    // TODO: Win condition
+    if (isEnd(onTurn)) {
+        running = false;
+        std::cout << "Player " << onTurn->getId() << " won the game" << std::endl;
+        return;
+    }
     // set the next player on turn
     int p = onTurn->getId();
     if (p == 4) {
@@ -166,7 +177,6 @@ bool Clovece::doTurn() {
     } else {
         onTurn = players[p];
     }
-    return true;
 }
 
 bool Clovece::hasMoves(int rolled) {
@@ -199,9 +209,27 @@ bool Clovece::isHome(Figure* figure) {
 bool Clovece::isHome(Player* player) {
     for (int i = 0; i < 4; i++) {
         Figure* figure = player->getFigure(i);
-        if (!board->isHome(board->getCircle(figure->getX(), figure->getY()))) {
+        if (!isHome(figure)) {
             return false;
         }
     }
     return true;
+}
+
+bool Clovece::isEnd(Figure* figure) {
+    return board->isEnd(figure->getPlayer(), board->getCircle(figure->getX(), figure->getY()));
+}
+
+bool Clovece::isEnd(Player* player) {
+    for (int i = 0; i < 4; i++) {
+        Figure* figure = player->getFigure(i);
+        if (!isEnd(figure)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Clovece::isRunning() const {
+    return running;
 }
