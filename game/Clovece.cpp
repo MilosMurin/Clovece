@@ -25,7 +25,7 @@ void Clovece::addPlyer(Player* player) {
 
 void Clovece::setup() {
     // set figures to home
-    for (auto player : players) {
+    for (auto player: players) {
         for (int i = 0; i < 4; i++) {
             board->getHome(player->getId(), i)->setFigure(player->getFigure(i));
         }
@@ -87,27 +87,41 @@ bool Clovece::moveFigure(Figure* figure, int amount, bool test) {
             return false;
         } else {
             std::cout << " by a figure of an opposng color" << std::endl;
-            // kick opposing player out
-            return false; // return true when fixed
+            int p = fig->getPlayer();
+            Circle* home = board->getHome(p, fig->getId() - 1);
+            current->setFigure(nullptr);
+            home->setFigure(fig);
+            printf("  Figure %d of player %d was kicked by the figure %d of player %d\n",
+                   fig->getId(), p, figure->getPlayer(), figure->getId());
         }
-    } else { // circle is empty
-        if (!test) {
-            std::cout << "  Circle is empty moving figure" << std::endl;
-            std::cout << "      from: " << start->getX() << ", " << start->getY() << std::endl;
-            std::cout << "      to:   " << current->getX() << ", " << current->getY() << std::endl;
-            // move the figure there
-            start->setFigure(nullptr);
-            current->setFigure(figure);
-        }
-        return true;
     }
+    // circle is empty
+    if (!test) {
+        std::cout << "  Circle is empty moving figure" << std::endl;
+        std::cout << "      from: " << start->getX() << ", " << start->getY() << std::endl;
+        std::cout << "      to:   " << current->getX() << ", " << current->getY() << std::endl;
+        // move the figure there
+        start->setFigure(nullptr);
+        current->setFigure(figure);
+    }
+    return true;
+
 }
 
 bool Clovece::doTurn() {
     std::cout << "Player " << onTurn->getId() << " is on turn." << std::endl;
     int roll = rollDice();
     std::cout << "  Roll was " << roll << std::endl;
-    // TODO: If all figures home roll 3x to try to get 6
+    if (isHome(onTurn)) {
+        for (int i = 0; i < 2; i++) {
+            std::cout << "  Player has all figures home rolling again." << std::endl;
+            roll = rollDice();
+            std::cout << "  Roll was " << roll << std::endl;
+            if (roll == 6) {
+                break;
+            }
+        }
+    }
     if (hasMoves(roll)) {
         std::cout << "  Choose a figure to move" << std::endl;
         int f = 0;
@@ -166,7 +180,7 @@ bool Clovece::hasMoves(int rolled) {
 }
 
 bool Clovece::hasMoves(Figure* figure, int rolled) {
-    if (board->isHome(board->getCircle(figure->getX(), figure->getY()))) {
+    if (isHome(figure)) {
         if (rolled == 6) {
             return true;
         }
@@ -176,4 +190,18 @@ bool Clovece::hasMoves(Figure* figure, int rolled) {
         }
     }
     return false;
+}
+
+bool Clovece::isHome(Figure* figure) {
+    return board->isHome(board->getCircle(figure->getX(), figure->getY()));
+}
+
+bool Clovece::isHome(Player* player) {
+    for (int i = 0; i < 4; i++) {
+        Figure* figure = player->getFigure(i);
+        if (!board->isHome(board->getCircle(figure->getX(), figure->getY()))) {
+            return false;
+        }
+    }
+    return true;
 }

@@ -35,4 +35,8 @@ public:
     bool hasMoves(int rolled);
 
     bool hasMoves(Figure* figure, int rolled);
+
+    bool isHome(Figure* figure);
+
+    bool isHome(Player* player);
 };
