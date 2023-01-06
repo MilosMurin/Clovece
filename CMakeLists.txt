@@ -12,3 +12,5 @@ add_executable(Clovece main.cpp
         game/network/Move.cpp game/network/Move.h
         game/network/Connection.cpp game/network/Connection.h
         )
+
+target_link_libraries(Clovece pthread)

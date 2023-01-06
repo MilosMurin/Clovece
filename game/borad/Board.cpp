@@ -102,3 +102,13 @@ bool Board::isEnd(int player, Circle* circle) {
     }
     return false;
 }
+
+string Board::toWeb() {
+    string s = "";
+    for (auto& item : board) {
+        for (auto circle : item) {
+            s += circle->toWeb();
+        }
+    }
+    return s;
+}
