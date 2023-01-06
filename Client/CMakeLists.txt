@@ -1,21 +1,13 @@
 cmake_minimum_required(VERSION 3.18)
-project(Clovece)
+project(Client)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Clovece main.cpp
-        game/borad/Board.cpp game/borad/Board.h
-        game/borad/Circle.cpp game/borad/Circle.h
-        game/borad/Figure.cpp game/borad/Figure.h
-        game/Clovece.cpp game/Clovece.h
-        game/Player.cpp game/Player.h
-        game/network/Move.cpp game/network/Move.h
-        game/network/Connection.cpp game/network/Connection.h
+add_executable(Client Client/client.cpp
         Client/graphic/Graphic.cpp
         Client/graphic/Graphic.h
         Client/graphic/Settings.cpp
-        Client/graphic/Settings.h
-        Client/client.cpp)
+        Client/graphic/Settings.h)
 
 #LOCAL SFML
 #pridať cestu k suboru, aby sme ju nemuseli meniť vždy keď to presunieme inam
