@@ -21,7 +21,8 @@ private:
 
     char buffer[BUFFER_SIZE] = { 0 };
 
-    int socket = 0;
+    int comSocket = 0;
+    int sockets[4]{};
 
     thread readThread;
     thread writeThread;
@@ -31,15 +32,13 @@ private:
 public:
     Connection(bool host, string  ip, unsigned int port);
 
-    void sendString(const char* str);
+    void sendString(const char* str) const;
 
-    void sendMove(Move move);
+    void sendMove(Move* move) const;
 
-    void sendEnd();
+    void sendEnd() const;
 
-    void sendBoard(Board* board);
-
-    void sendPlayer(Player* player);
+    void sendPlayer(Player* player) const;
 
     void readFromSocket();
 

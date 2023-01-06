@@ -180,9 +180,6 @@ string Circle::getLine(int index) {
     return s;
 }
 
-string Circle::toWeb() {
-    return to_string(type) ;
-}
 
 
 

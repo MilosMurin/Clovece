@@ -76,6 +76,4 @@ public:
     bool isHome(Circle* circle);
 
     bool isEnd(int player, Circle* circle);
-
-    string toWeb();
 };

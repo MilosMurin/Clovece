@@ -38,4 +38,8 @@ public:
      * @return the id of this figure
      */
     int getId() const;
+
+    string toWeb();
+
+    void loadFromWeb(const string& str);
 };

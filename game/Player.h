@@ -3,6 +3,8 @@
 
 #include "borad/Figure.h"
 
+using namespace std;
+
 class Player {
 
 private:
@@ -22,4 +24,7 @@ public:
 
     Figure* getFigure(int i);
 
+    string toWeb() const;
+
+    void loadFromWeb(const string& str);
 };

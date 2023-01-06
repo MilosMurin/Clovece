@@ -62,6 +62,4 @@ public:
     int getY() const;
 
     string getLine(int index);
-
-    string toWeb();
 };

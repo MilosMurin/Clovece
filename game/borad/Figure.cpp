@@ -34,3 +34,12 @@ void Figure::setCircle(int x, int y) {
 int Figure::getId() const {
     return id;
 }
+
+string Figure::toWeb() {
+    return to_string(this->id) + this->name;
+}
+
+void Figure::loadFromWeb(const string& str) {
+    this->id = str[0] - 48;
+    this->name = str.substr(1);
+}

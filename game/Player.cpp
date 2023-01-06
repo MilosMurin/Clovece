@@ -1,6 +1,7 @@
 #include "Player.h"
 
 #include <utility>
+#include <sstream>
 
 
 Player::Player(int id) : Player(id, "Player " + to_string(id)) {
@@ -30,4 +31,23 @@ int Player::getId() const {
 
 Figure* Player::getFigure(int i) {
     return figures[i];
+}
+
+string Player::toWeb() const{
+    string s = this->name;
+    for (auto& figure: figures) {
+        s += "|" + figure->toWeb();
+    }
+    s += "|";
+    return s;
+}
+
+void Player::loadFromWeb(const string& str) {
+    stringstream strstr{str};
+    getline(strstr, this->name, '|');
+    for (auto& figure: figures) {
+        string s;
+        getline(strstr, s, '|');
+        figure->loadFromWeb(s);
+    }
 }
