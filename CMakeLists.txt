@@ -3,25 +3,48 @@ project(Clovece)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Clovece main.cpp
-        game/borad/Board.cpp game/borad/Board.h
-        game/borad/Circle.cpp game/borad/Circle.h
-        game/borad/Figure.cpp game/borad/Figure.h
-        game/Clovece.cpp game/Clovece.h
-        game/Player.cpp game/Player.h
-        game/network/Move.cpp game/network/Move.h
-        game/network/Connection.cpp game/network/Connection.h
+#SERVER CMAKE
+set(SOURCE
+        game/borad/Board.cpp
+        game/borad/Circle.cpp
+        ame/borad/Figure.cpp
+        game/Clovece.cpp
+        game/Player.cpp
+        game/network/Move.cpp
+        game/network/Connection.cpp
+    )
+set(HEADERS
+        game/borad/Board.h
+        game/borad/Circle.h
+        game/borad/Figure.h
+        game/Clovece.h
+        game/Player.h
+        game/network/Move.h
+        game/network/Connection.h
+        )
+add_executable(Clovece main.cpp)
+
+#FRIOS SFML
+#find_package(SFML REQUIRED COMPONENTS graphics system)
+#include_directories("usr/include/SFML")
+#target_link_libraries(Clovece sfml-graphics sfml-window)
+
+#CLIENT CMAKE
+set(SOURCE
         Client/graphic/Graphic.cpp
-        Client/graphic/Graphic.h
         Client/graphic/Settings.cpp
+        )
+set(HEADERS
+        Client/graphic/Graphic.h
         Client/graphic/Settings.h
-        Client/client.cpp)
+        )
+add_executable(Client Client/client.cpp)
 
 #LOCAL SFML
-#pridať cestu k suboru, aby sme ju nemuseli meniť vždy keď to presunieme inam
-#set(SFML “C:\\Users\\jgres\\Desktop\\Princípy operačných systémov\\SP POS\\Človeče”)
-#find_package(SFML REQUIRED COMPONENTS graphics system)
+set(SFML_DIR "C:\\Users\\jgres\\Desktop\\Princípy operačných systémov\\SP POS\\Človeče\\SFML\\lib\\cmake\\SFML")
+set(SFML_STATIC_LIBRARIES TRUE)
+include_directories("C:/SFML/include")
 
-find_package(SFML REQUIRED COMPONENTS graphics system)
-include_directories("usr/include/SFML")
-target_link_libraries(Clovece sfml-graphics sfml-window)
+find_package(SFML COMPONENTS system window graphics network audio REQUIRED)
+include_directories(${SFML_INCLUDE_DIRS})
+target_link_libraries(Clovece sfml-system sfml-window sfml-graphics sfml-audio sfml-network)
