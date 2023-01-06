@@ -2,13 +2,12 @@
 <project version="4">
   <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="Pos (a34f27a9-26be-4902-9672-854a8f544794)">
+      <paths name="POSko (e4a6ef16-31db-4648-b0de-1c6acb157cc6)">
         <serverdata>
           <mappings>
-            <mapping deploy="/tmp/tmp.htBxoXHupi" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/gres2/SP" local="$PROJECT_DIR$" />
           </mappings>
           <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
           </excludedPaths>
         </serverdata>
