@@ -8,7 +8,10 @@
 #include <netdb.h>
 #include <iostream>
 
-Connection::Connection(bool host, string ip, unsigned int port) : host(host), ip(std::move(ip)), port(port) {
+Connection::Connection(bool host, string ip, unsigned int port) :
+        host(host), ip(std::move(ip)), port(port), mutexRun(new mutex()), mutexRead(new mutex()),
+        mutexWrite(new mutex()), writeMove(new condition_variable()), playMove(new condition_variable()),
+        writeMoveToSend(new condition_variable()), sendMoveCond(new condition_variable()) {
 
     if (this->host) {
         int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -91,36 +94,73 @@ Connection::Connection(bool host, string ip, unsigned int port) : host(host), ip
             return;
         }
     }
+    readThread = new thread([this]() -> void { this->readFromSocket(); });
+    writeThread = new thread([this]() -> void { this->sendString(); });
+    // TODO: Create threads
 }
 
-void Connection::sendString(const char* str) const {
-    if (strlen(str) >= BUFFER_SIZE) {
-        return;
+Connection::~Connection() {
+    delete mutexRun;
+    delete mutexRead;
+    delete mutexWrite;
+    delete writeMove;
+    delete playMove;
+    delete writeMoveToSend;
+    delete sendMoveCond;
+}
+
+void Connection::writeStringToSend(string str) {
+    bool runWrite = true;
+    while (runWrite) {
+        std::unique_lock<std::mutex> loc(*mutexWrite);
+        while (toSend != "-") {
+            std::cout << "Still unsend string present" << std::endl;
+            writeMoveToSend->wait(loc);
+        }
+        toSend = std::move(str);
+        sendMoveCond->notify_one();
+        loc.unlock();
+        std::unique_lock<std::mutex> loc2(*mutexRun);
+        runWrite = run;
+        loc2.unlock();
     }
-    if (comSocket > 0) {
-        send(comSocket, str, strlen(str), 0);
+}
+
+void Connection::sendString() {
+    std::unique_lock<std::mutex> loc(*mutexWrite);
+    while (toSend == "-") {
+        std::cout << "Nothing to send" << std::endl;
+        sendMoveCond->wait(loc);
     }
-    for (int socket: sockets) {
-        if (socket > 0) {
-            send(socket, str, strlen(str), 0);
+    if (toSend.length() < BUFFER_SIZE) {
+        if (comSocket > 0) {
+            send(comSocket, toSend.c_str(), toSend.length(), 0);
+        }
+        for (int socket: sockets) {
+            if (socket > 0) {
+                send(socket, toSend.c_str(), toSend.length(), 0);
+            }
         }
     }
+    toSend = "-";
+    writeMoveToSend->notify_one();
 }
 
-void Connection::sendMove(Move* move) const {
-    sendString(to_string(move->toWeb()).c_str());
+void Connection::sendMove(Move* move) {
+    writeStringToSend(to_string(move->toWeb()));
 }
 
-void Connection::sendEnd() const {
-    sendString(":end:");
+void Connection::sendEnd() {
+    writeStringToSend("end");
 }
 
-void Connection::sendPlayer(Player* player) const {
-    sendString(player->toWeb().c_str());
+void Connection::sendPlayer(Player* player) {
+    writeStringToSend(player->toWeb());
 }
 
 void Connection::readFromSocket() {
-    while (run) {
+    bool runRead = true;
+    while (runRead) {
         if (host) {
             for (int socket: sockets) {
                 if (socket > 0) {
@@ -134,22 +174,31 @@ void Connection::readFromSocket() {
                 readString(buffer);
             }
         }
+        std::unique_lock<std::mutex> loc(*mutexRun);
+        runRead = run;
+        loc.unlock();
     }
 }
 
 void Connection::readString(const char* str) {
     if (strcmp(str, "end") == 0) {
-        run = false;
+        endConnection();
     } else {
-        // TODO: play the move
-        // lock mutex board
-        // play the move
-        // unlock mutex
+        std::unique_lock<std::mutex> loc(*mutexRead);
+        while (received != "-") {
+            std::cout << "Still unplayed move present" << std::endl;
+            writeMove->wait(loc);
+        }
+        received = str;
+        playMove->notify_one();
+        loc.unlock();
     }
 }
 
 void Connection::endConnection() {
+    std::unique_lock<std::mutex> loc(*mutexRun);
     run = false;
+    loc.unlock();
 }
 
 int Connection::isConnected() {
@@ -167,4 +216,64 @@ int Connection::isConnected() {
         }
         return 0;
     }
+}
+
+const string& Connection::getReceived() const {
+    return received;
+}
+
+mutex* Connection::getMutexRead() const {
+    return mutexRead;
+}
+
+condition_variable* Connection::getWriteMove() const {
+    return writeMove;
+}
+
+condition_variable* Connection::getPlayMove() const {
+    return playMove;
+}
+
+bool Connection::isHost() const {
+    return host;
+}
+
+Response::Response() = default;
+
+Response::Response(const string& value) {
+    setValue(value);
+}
+
+bool Response::isMove() const {
+    if (isInt) {
+        if (intValue >= 1101 && intValue <= 4412) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Response::isNum() const {
+    return isInt;
+}
+
+int Response::getIntValue() const {
+    return intValue;
+}
+
+const string& Response::getValue() const {
+    return value;
+}
+
+void Response::setValue(const string& value) {
+    this->value = value;
+    try {
+        intValue = stoi(this->value);
+    } catch (exception& e) {
+        isInt = false;
+    }
+}
+
+bool Response::isEnd() {
+    return this->value == "end";
 }

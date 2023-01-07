@@ -13,6 +13,7 @@ private:
     std::string name;
     int id;
     bool bot = true;
+    bool online = false;
 
 public:
     explicit Player(int id);
@@ -33,5 +34,9 @@ public:
 
     void setBot(bool bot);
 
-    void setName(const string &name);
+    bool isOnline() const;
+
+    void setIsOnline(bool online);
+
+    void setName(const string& name);
 };

@@ -60,6 +60,14 @@ void Player::setBot(bool bot) {
     Player::bot = bot;
 }
 
-void Player::setName(const string &name) {
+bool Player::isOnline() const {
+    return online;
+}
+
+void Player::setIsOnline(bool online) {
+    this->online = online;
+}
+
+void Player::setName(const string& name) {
     Player::name = name;
 }
