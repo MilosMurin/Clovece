@@ -42,6 +42,9 @@ void Clovece::start() {
     running = true;
     while (running) {
         doTurn();
+        if (!connection->shouldRun()) {
+            running = false;
+        }
     }
 }
 

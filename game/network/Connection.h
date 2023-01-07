@@ -78,6 +78,8 @@ public:
     bool isHost() const;
 
     void setReceived(const string& received);
+
+    bool shouldRun();
 };
 
 class Response {

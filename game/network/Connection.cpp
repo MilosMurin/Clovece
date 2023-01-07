@@ -258,6 +258,10 @@ void Connection::setReceived(const string& received) {
     this->received = received;
 }
 
+bool Connection::shouldRun() {
+    return run;
+}
+
 Response::Response() = default;
 
 Response::Response(const string& value) {
