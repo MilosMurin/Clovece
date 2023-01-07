@@ -134,6 +134,7 @@ int main() {
                 auto* con = new Connection(true, "", port);
                 if (con->isConnected() >= 1) {
                     clovece->setConnection(con);
+                    clovece->getPlayer(1)->setBot(false);
                     for (int i = 2; i <= 1 + con->isConnected(); i++) {
                         clovece->getPlayer(i)->setBot(false);
                         clovece->getPlayer(i)->setIsOnline(true);

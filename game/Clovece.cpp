@@ -193,7 +193,7 @@ void Clovece::doTurn() {
             }
             move = {onTurn->getId(), figure->getId(), roll};
             moveFigure(figure, roll, false);
-            this->board->print();
+            this->print();
         } else {
             std::cout << "\t" << onTurn->getName() << " has no moves." << std::endl;
         }
@@ -310,7 +310,7 @@ bool Clovece::isRunning() const {
 }
 
 Figure* Clovece::getFigure(Move move) {
-    return players[move.getPlayerId()]->getFigure(move.getFigureId());
+    return players[move.getPlayerId() - 1]->getFigure(move.getFigureId());
 }
 
 bool Clovece::moveFigure(Move move) {
