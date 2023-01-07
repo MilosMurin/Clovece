@@ -51,3 +51,11 @@ void Player::loadFromWeb(const string& str) {
         figure->loadFromWeb(s);
     }
 }
+
+bool Player::isBot() const {
+    return bot;
+}
+
+void Player::setBot(bool bot) {
+    Player::bot = bot;
+}

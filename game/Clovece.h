@@ -13,6 +13,7 @@ private:
     std::mt19937 mt;
     uniform_int_distribution<int> dice{1, 6};
     bool running = false;
+    int playerId = 1;
 
 public:
     explicit Clovece(std::mt19937 mt);
@@ -22,6 +23,8 @@ public:
     void addPlyer(Player* player);
 
     void setup();
+
+    void start();
 
     int rollDice();
 
@@ -38,7 +41,7 @@ public:
     /**
      * @param bot if true it automatically chooses the first figure that can move, if false it lets the player choose through console
      */
-    int getFigureToMove(bool bot, int roll);
+    int getFigureToMove(int roll);
 
     void doTurn();
 
@@ -57,4 +60,10 @@ public:
     bool isRunning() const;
 
     Figure* getFigure(Move move);
+
+    int getPlayerId() const;
+
+    void setPlayerId(int playerId);
+
+    void nextPlayerOnTurn();
 };

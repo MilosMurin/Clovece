@@ -12,6 +12,7 @@ private:
     // color
     std::string name;
     int id;
+    bool bot = true;
 
 public:
     explicit Player(int id);
@@ -27,4 +28,8 @@ public:
     string toWeb() const;
 
     void loadFromWeb(const string& str);
+
+    bool isBot() const;
+
+    void setBot(bool bot);
 };

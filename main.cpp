@@ -9,6 +9,7 @@ int main() {
 
     auto* clovece = new Clovece(mt);
     auto* p1 = new Player(1);
+    p1->setBot(false);
     auto* p2 = new Player(2);
     auto* p3 = new Player(3);
     auto* p4 = new Player(4);
@@ -19,9 +20,8 @@ int main() {
 
     clovece->setup();
 
-    while (clovece->isRunning()) {
-        clovece->doTurn();
-    }
+    // TODO: Player connection
+    clovece->start();
 
     std::cout << "Ending program" << std::endl;
 
