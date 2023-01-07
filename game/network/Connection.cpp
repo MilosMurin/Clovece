@@ -98,12 +98,30 @@ void Connection::sendPlayer(Player* player) const {
 
 void Connection::readFromSocket() {
     while (run) {
-        read(comSocket, buffer, BUFFER_SIZE);
-        if (strcmp(buffer, ":end:") == 0) {
-            run = false;
+        if (host) {
+            for (int socket : sockets) {
+                if (socket > 0) {
+                    read(socket, buffer, BUFFER_SIZE);
+                    readString(buffer);
+                }
+            }
         } else {
-            // TODO: play the move
+            if (comSocket > 0) {
+                read(comSocket, buffer, BUFFER_SIZE);
+                readString(buffer);
+            }
         }
+    }
+}
+
+void Connection::readString(const char* str) {
+    if (strcmp(str, "end") == 0) {
+        run = false;
+    } else {
+        // TODO: play the move
+        // lock mutex board
+        // play the move
+        // unlock mutex
     }
 }
 

@@ -42,5 +42,7 @@ public:
 
     void readFromSocket();
 
+    void readString(const char* str);
+
     void endConnection();
 };

@@ -66,4 +66,6 @@ public:
     void setPlayerId(int playerId);
 
     void nextPlayerOnTurn();
+
+    Player* getPlayer(int id);
 };

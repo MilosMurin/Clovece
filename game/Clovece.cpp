@@ -284,3 +284,7 @@ void Clovece::nextPlayerOnTurn() {
         onTurn = players[p];
     }
 }
+
+Player* Clovece::getPlayer(int id) {
+    return players[id - 1];
+}
