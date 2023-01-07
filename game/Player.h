@@ -32,4 +32,6 @@ public:
     bool isBot() const;
 
     void setBot(bool bot);
+
+    void setName(const string &name);
 };

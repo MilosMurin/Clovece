@@ -30,6 +30,10 @@ public:
 
     int rollDice();
 
+    void print();
+
+    void nameBots();
+
     /**
      * @param figure the figure to move
      * @param amount rolled amount

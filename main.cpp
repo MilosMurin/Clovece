@@ -19,8 +19,8 @@ int main() {
 
     clovece->setup();
 
-
     std::cout << "Hello welcome to Clovece :)" << std::endl;
+
     // TODO: Name choosing, figure name choosing
 
     int game = 0;
@@ -88,9 +88,17 @@ int main() {
                     }
                 }
                 clovece->getPlayer(player)->setBot(false);
+                std::cout << "Chose your name :" << std::endl;
+                std::string name;
+                cin >> name;
+                clovece->getPlayer(player)->setName(name);
             }
         }
     } else {
+        std::cout << "Chose your name :" << std::endl;
+        std::string name;
+        cin >> name;
+
         int host = 0;
         while (host == 0) {
             std::cout << "Would you like to [1] host the game or [2] join someones game" << std::endl;

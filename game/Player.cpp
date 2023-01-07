@@ -59,3 +59,7 @@ bool Player::isBot() const {
 void Player::setBot(bool bot) {
     Player::bot = bot;
 }
+
+void Player::setName(const string &name) {
+    Player::name = name;
+}
