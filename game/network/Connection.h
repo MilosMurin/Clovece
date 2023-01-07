@@ -15,6 +15,7 @@ class Connection {
 private:
 
     static const int BUFFER_SIZE = 1024;
+    int idToSend = 2;
 
     bool host;
     string ip;

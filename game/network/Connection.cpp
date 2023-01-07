@@ -47,6 +47,7 @@ Connection::Connection(bool host, string ip, unsigned int port) :
                     close(sockets[i]);
                 } else {
                     connected = true;
+                    send(sockets[i], to_string(idToSend++).c_str(), 1, 0);
                 }
                 if (sockets[i] < 0) {
                     std::cout << "Nastala chyba pri spojeni" << std::endl;
@@ -96,7 +97,6 @@ Connection::Connection(bool host, string ip, unsigned int port) :
     }
     readThread = new thread([this]() -> void { this->readFromSocket(); });
     writeThread = new thread([this]() -> void { this->sendString(); });
-    // TODO: Create threads
 }
 
 Connection::~Connection() {
@@ -110,40 +110,56 @@ Connection::~Connection() {
 }
 
 void Connection::writeStringToSend(string str) {
+    std::unique_lock<std::mutex> loc(*mutexWrite);
+    while (toSend != "-") {
+        std::cout << "Still unsend string present" << std::endl;
+        writeMoveToSend->wait(loc);
+    }
+    toSend = std::move(str);
+    sendMoveCond->notify_one();
+    loc.unlock();
+}
+
+void Connection::sendString() {
     bool runWrite = true;
     while (runWrite) {
         std::unique_lock<std::mutex> loc(*mutexWrite);
-        while (toSend != "-") {
-            std::cout << "Still unsend string present" << std::endl;
-            writeMoveToSend->wait(loc);
+        while (toSend == "-") {
+            std::cout << "Nothing to send" << std::endl;
+            sendMoveCond->wait(loc);
         }
-        toSend = std::move(str);
-        sendMoveCond->notify_one();
-        loc.unlock();
+        if (toSend.length() < BUFFER_SIZE) {
+            if (comSocket > 0) {
+                send(comSocket, toSend.c_str(), toSend.length(), 0);
+            }
+            for (int socket: sockets) {
+                if (socket > 0) {
+                    send(socket, toSend.c_str(), toSend.length(), 0);
+                }
+            }
+        }
+        toSend = "-";
+        writeMoveToSend->notify_one();
         std::unique_lock<std::mutex> loc2(*mutexRun);
         runWrite = run;
         loc2.unlock();
     }
-}
-
-void Connection::sendString() {
-    std::unique_lock<std::mutex> loc(*mutexWrite);
-    while (toSend == "-") {
-        std::cout << "Nothing to send" << std::endl;
-        sendMoveCond->wait(loc);
+    if (comSocket > 0) {
+        send(comSocket, "end", strlen("end"), 0);
     }
-    if (toSend.length() < BUFFER_SIZE) {
-        if (comSocket > 0) {
-            send(comSocket, toSend.c_str(), toSend.length(), 0);
-        }
-        for (int socket: sockets) {
-            if (socket > 0) {
-                send(socket, toSend.c_str(), toSend.length(), 0);
-            }
+    for (int socket: sockets) {
+        if (socket > 0) {
+            send(socket, "end", strlen("end"), 0);
         }
     }
-    toSend = "-";
-    writeMoveToSend->notify_one();
+    if (comSocket > 0) {
+        close(comSocket);
+    }
+    for (int socket: sockets) {
+        if (socket > 0) {
+            close(socket);
+        }
+    }
 }
 
 void Connection::sendMove(Move* move) {

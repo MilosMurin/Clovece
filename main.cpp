@@ -32,7 +32,8 @@ int main() {
         if (s > 0 && s < 3) {
             game = s;
         } else {
-            std::cout << "That is not a vlid option try typing '1' for singleplayer or '2' for multiplayer" << std::endl;
+            std::cout << "That is not a vlid option try typing '1' for singleplayer or '2' for multiplayer"
+                      << std::endl;
         }
     }
 
@@ -108,7 +109,8 @@ int main() {
             if (s > 0 && s < 3) {
                 host = s;
             } else {
-                std::cout << "That is not a vlid option try typing '1' for hosting a game or '2' for joining a game" << std::endl;
+                std::cout << "That is not a vlid option try typing '1' for hosting a game or '2' for joining a game"
+                          << std::endl;
             }
         }
         if (host == 1) {
@@ -131,7 +133,12 @@ int main() {
 
                 auto* con = new Connection(true, "", port);
                 if (con->isConnected() > 1) {
-                    //
+                    clovece->setConnection(con);
+                    for (int i = 2; i <= 1 + con->isConnected(); i++) {
+                        clovece->getPlayer(i)->setBot(false);
+                        clovece->getPlayer(i)->setIsOnline(true);
+                    }
+                    cont = false;
                 } else {
                     std::cout << "Nobody connected. Try again? [Y/N]" << std::endl;
                     string s2;
@@ -157,6 +164,29 @@ int main() {
                 auto* con = new Connection(false, address, port);
                 if (con->isConnected() == 1) {
                     clovece->setConnection(con);
+                    for (int i = 1; i <= 4; i++) {
+                        clovece->getPlayer(i)->setBot(false);
+                        clovece->getPlayer(i)->setIsOnline(true);
+                    }
+                    int id = -1;
+                    while (id == -1) {
+                        Response response{};
+                        std::unique_lock<std::mutex> loc(*con->getMutexRead());
+                        while (con->getReceived() == "-") {
+                            std::cout << "Waiting for host to send your id" << std::endl;
+                            con->getPlayMove()->wait(loc);
+                        }
+                        response.setValue(con->getReceived());
+                        con->getWriteMove()->notify_one();
+                        loc.unlock();
+                        if (response.isNum()) {
+                            if (response.getIntValue() <= 4) {
+                                id = response.getIntValue();
+                                clovece->setPlayerId(id);
+                                clovece->getPlayer(id)->setIsOnline(false);
+                            }
+                        }
+                    }
                     connected = true;
                 } else {
                     std::cout << "Connection failed! Try again, or type -1 to end the program." << std::endl;
