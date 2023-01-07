@@ -168,7 +168,9 @@ void Clovece::doTurn() {
         std::cout << "Player " << onTurn->getId() << " won the game" << std::endl;
         return;
     }
-    // TODO: sendMove(move);
+    if (connection != nullptr) {
+        connection->sendMove(&move);
+    }
     // set the next player on turn
     nextPlayerOnTurn();
 }
@@ -287,4 +289,12 @@ void Clovece::nextPlayerOnTurn() {
 
 Player* Clovece::getPlayer(int id) {
     return players[id - 1];
+}
+
+Connection* Clovece::getConnection() const {
+    return connection;
+}
+
+void Clovece::setConnection(Connection* connection) {
+    this->connection = connection;
 }

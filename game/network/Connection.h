@@ -45,4 +45,6 @@ public:
     void readString(const char* str);
 
     void endConnection();
+
+    int isConnected();
 };

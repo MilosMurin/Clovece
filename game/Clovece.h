@@ -3,6 +3,7 @@
 #include "borad/Board.h"
 #include "Player.h"
 #include "network/Move.h"
+#include "network/Connection.h"
 
 class Clovece {
 
@@ -14,6 +15,7 @@ private:
     uniform_int_distribution<int> dice{1, 6};
     bool running = false;
     int playerId = 1;
+    Connection* connection = nullptr;
 
 public:
     explicit Clovece(std::mt19937 mt);
@@ -68,4 +70,8 @@ public:
     void nextPlayerOnTurn();
 
     Player* getPlayer(int id);
+
+    Connection* getConnection() const;
+
+    void setConnection(Connection* connection);
 };

@@ -25,9 +25,10 @@ int main() {
 
     int game = 0;
     while (game == 0) {
-        std::cout << "Would you like to play (1) a singleplayer game or (2) a multiplayer game" << std::endl;
-        int s;
-        cin >> s;
+        std::cout << "Would you like to play [1] a singleplayer game or [2] a multiplayer game" << std::endl;
+        string str;
+        cin >> str;
+        int s = atoi(str.c_str());
         if (s > 0 && s < 3) {
             game = s;
         } else {
@@ -38,9 +39,10 @@ int main() {
     if (game == 1) { // singleplayer
         int players = 0;
         while (players == 0) {
-            std::cout << "How many players are going to play (1-4) the rest will be filled by bots" << std::endl;
-            int s;
-            cin >> s;
+            std::cout << "How many players are going to play [1-4] the rest will be filled by bots" << std::endl;
+            string str;
+            cin >> str;
+            int s = atoi(str.c_str());
             if (s > 0 && s < 5) {
                 players = s;
             } else {
@@ -54,9 +56,10 @@ int main() {
         } else if (players == 3) { // give choice for bot ids
             int bot = 0;
             while (bot == 0) {
-                std::cout << "Choose an id that the bot will get (1-4)" << std::endl;
-                int s;
-                cin >> s;
+                std::cout << "Choose an id that the bot will get [1-4]" << std::endl;
+                string str;
+                cin >> str;
+                int s = atoi(str.c_str());
                 if (s > 0 && s < 5) {
                     bot = s;
                 } else {
@@ -70,9 +73,10 @@ int main() {
             for (int i = 1; i <= players; i++) {
                 int player = 0;
                 while (player == 0) {
-                    std::cout << "Player " << i << " choose an id you would like have (1-4)" << std::endl;
-                    int s;
-                    cin >> s;
+                    std::cout << "Player " << i << " choose an id you would like have [1-4]" << std::endl;
+                    string str;
+                    cin >> str;
+                    int s = atoi(str.c_str());
                     if (s > 0 && s < 5) {
                         if (!clovece->getPlayer(s)->isBot()) {
                             std::cout << "That id is already taken try a different one" << std::endl;
@@ -87,11 +91,73 @@ int main() {
             }
         }
     } else {
+        int host = 0;
+        while (host == 0) {
+            std::cout << "Would you like to [1] host the game or [2] join someones game" << std::endl;
+            string str;
+            cin >> str;
+            int s = atoi(str.c_str());
+            if (s > 0 && s < 3) {
+                host = s;
+            } else {
+                std::cout << "That is not a vlid option try typing '1' for hosting a game or '2' for joining a game" << std::endl;
+            }
+        }
+        if (host == 1) {
+            bool cont = true;
+            while (cont) {
+                int port = 0;
+                while (port == 0) {
+                    std::cout << "Choose a port to open the game on (more than 0)" << std::endl;
+                    string str;
+                    cin >> str;
+                    int s = atoi(str.c_str());
+                    if (s > 0) {
+                        port = s;
+                    } else {
+                        std::cout << "That is not a vlid option try typing a number higher than 0" << std::endl;
+                    }
+                }
+                std::cout << "Send your address to people you want to connect to with the port you have chosen"
+                          << std::endl;
 
+                auto* con = new Connection(true, "", port);
+                if (con->isConnected() > 1) {
+                    //
+                } else {
+                    std::cout << "Nobody connected. Try again? [Y/N]" << std::endl;
+                    string s2;
+                    cin >> s2;
+                    if (s2 == "N") {
+                        cont = false;
+                    }
+                }
+            }
+
+        } else {
+            bool connected = false;
+            while (!connected) {
+                std::cout << "Write the address to connect to (without the port)" << std::endl;
+                string address;
+                if (address == "-1") {
+                    break;
+                }
+                cin >> address;
+                std::cout << "Write the port to connect to" << std::endl;
+                int port;
+                cin >> port;
+                auto* con = new Connection(false, address, port);
+                if (con->isConnected() == 1) {
+                    clovece->setConnection(con);
+                    connected = true;
+                } else {
+                    std::cout << "Connection failed! Try again, or type -1 to end the program." << std::endl;
+                    delete con;
+                }
+            }
+        }
     }
 
-
-    // TODO: Player connection
     clovece->start();
 
     std::cout << "Ending program" << std::endl;
