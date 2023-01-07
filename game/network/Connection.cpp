@@ -270,7 +270,7 @@ Response::Response(const string& value) {
 
 bool Response::isMove() const {
     if (isInt) {
-        if (intValue >= 1101 && intValue <= 4412) {
+        if (intValue >= 1001 && intValue <= 4412) {
             return true;
         }
     }
