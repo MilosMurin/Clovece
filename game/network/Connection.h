@@ -76,6 +76,8 @@ public:
     condition_variable* getPlayMove() const;
 
     bool isHost() const;
+
+    void setReceived(const string& received);
 };
 
 class Response {

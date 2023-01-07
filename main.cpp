@@ -132,7 +132,7 @@ int main() {
                           << std::endl;
 
                 auto* con = new Connection(true, "", port);
-                if (con->isConnected() > 1) {
+                if (con->isConnected() >= 1) {
                     clovece->setConnection(con);
                     for (int i = 2; i <= 1 + con->isConnected(); i++) {
                         clovece->getPlayer(i)->setBot(false);
@@ -182,8 +182,10 @@ int main() {
                         if (response.isNum()) {
                             if (response.getIntValue() <= 4) {
                                 id = response.getIntValue();
+                                std::cout << "Received id: " << id << std::endl;
                                 clovece->setPlayerId(id);
                                 clovece->getPlayer(id)->setIsOnline(false);
+                                con->setReceived("-");
                             }
                         }
                     }

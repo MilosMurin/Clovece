@@ -254,6 +254,10 @@ bool Connection::isHost() const {
     return host;
 }
 
+void Connection::setReceived(const string& received) {
+    this->received = received;
+}
+
 Response::Response() = default;
 
 Response::Response(const string& value) {

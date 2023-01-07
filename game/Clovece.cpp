@@ -124,29 +124,35 @@ void Clovece::doTurn() {
     Move move;
     std::cout << onTurn->getName() << " is on turn." << std::endl;
     if (onTurn->isOnline()) {
+        std::cout << onTurn->getName() << " is an online player." << std::endl;
 
         Response response{};
-        std::unique_lock<std::mutex> loc(*connection->getMutexRead());
-        while (connection->getReceived() == "-") {
-            std::cout << "Waiting for player to choose a figure to move" << std::endl;
-            connection->getPlayMove()->wait(loc);
-        }
-        response.setValue(connection->getReceived());
-        connection->getWriteMove()->notify_one();
-        loc.unlock();
-
-        if (response.isMove()) {
-            Move movePtr {response.getIntValue()};
-            moveFigure(movePtr);
-        } else if (response.isEnd()) {
-            if (connection->isHost()) {
-                std::cout << "Player has disconnected!" << std::endl;
-            } else {
-                std::cout << "Host has ended the game!" << std::endl;
+        while (!response.isMove()) {
+            std::unique_lock<std::mutex> loc(*connection->getMutexRead());
+            while (connection->getReceived() == "-") {
+                std::cout << "Waiting for player to choose a figure to move" << std::endl;
+                connection->getPlayMove()->wait(loc);
             }
-            running = false;
+            response.setValue(connection->getReceived());
+            connection->setReceived("-");
+            connection->getWriteMove()->notify_one();
+            loc.unlock();
+
+            if (response.isMove()) {
+                std::cout << response.getIntValue() << std::endl;
+                Move movePtr{response.getIntValue()};
+                moveFigure(movePtr);
+            } else if (response.isEnd()) {
+                if (connection->isHost()) {
+                    std::cout << "Player has disconnected!" << std::endl;
+                } else {
+                    std::cout << "Host has ended the game!" << std::endl;
+                }
+                running = false;
+            }
         }
     } else {
+        std::cout << onTurn->getName() << " is a local player." << std::endl;
         int roll = rollDice();
         std::cout << "\tRoll was " << roll << std::endl;
         if (isHome(onTurn) && roll != 6) {
