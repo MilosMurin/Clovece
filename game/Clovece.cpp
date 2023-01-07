@@ -221,6 +221,7 @@ int Clovece::getFigureToMove(int roll) {
             }
         }
     } else {
+        this->print();
         std::cout << "\tChoose a figure to move [";
         for (int i = 0; i < 4; i++) {
             if(hasMoves(onTurn->getFigure(i),roll))
@@ -311,7 +312,7 @@ bool Clovece::isRunning() const {
 }
 
 Figure* Clovece::getFigure(Move move) {
-    return players[move.getPlayerId() - 1]->getFigure(move.getFigureId());
+    return players[move.getPlayerId() - 1]->getFigure(move.getFigureId() - 1);
 }
 
 bool Clovece::moveFigure(Move move) {

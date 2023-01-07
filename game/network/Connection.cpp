@@ -112,7 +112,7 @@ Connection::~Connection() {
 void Connection::writeStringToSend(string str) {
     std::unique_lock<std::mutex> loc(*mutexWrite);
     while (toSend != "-") {
-        std::cout << "Still unsend string present" << std::endl;
+//        std::cout << "Still unsend string present" << std::endl;
         writeMoveToSend->wait(loc);
     }
     toSend = std::move(str);
@@ -125,7 +125,7 @@ void Connection::sendString() {
     while (runWrite) {
         std::unique_lock<std::mutex> loc(*mutexWrite);
         while (toSend == "-") {
-            std::cout << "Nothing to send" << std::endl;
+//            std::cout << "Nothing to send" << std::endl;
             sendMoveCond->wait(loc);
         }
         if (toSend.length() < BUFFER_SIZE) {
@@ -202,7 +202,7 @@ void Connection::readString(const char* str) {
     } else {
         std::unique_lock<std::mutex> loc(*mutexRead);
         while (received != "-") {
-            std::cout << "Still unplayed move present" << std::endl;
+//            std::cout << "Still unplayed move present" << std::endl;
             writeMove->wait(loc);
         }
         received = str;
