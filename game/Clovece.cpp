@@ -123,57 +123,82 @@ bool Clovece::moveFigure(Figure* figure, int amount, bool test) {
 void Clovece::doTurn() {
     Move move;
     std::cout << onTurn->getName() << " is on turn." << std::endl;
-    int roll = rollDice();
-    std::cout << "\tRoll was " << roll << std::endl;
-    if (isHome(onTurn) && roll != 6) {
-        for (int i = 0; i < 2; i++) {
-            std::cout << "\t" << onTurn->getName() << " has all figures home rolling again." << std::endl;
-            roll = rollDice();
-            std::cout << "\tRoll was " << roll << std::endl;
-            if (roll == 6) {
-                break;
+    if (onTurn->isOnline()) {
+
+        Response response{};
+        std::unique_lock<std::mutex> loc(*connection->getMutexRead());
+        while (connection->getReceived() == "-") {
+            std::cout << "Waiting for player to choose a figure to move" << std::endl;
+            connection->getPlayMove()->wait(loc);
+        }
+        response.setValue(connection->getReceived());
+        connection->getWriteMove()->notify_one();
+        loc.unlock();
+
+        if (response.isMove()) {
+            Move movePtr {response.getIntValue()};
+            moveFigure(movePtr);
+        } else if (response.isEnd()) {
+            if (connection->isHost()) {
+                std::cout << "Player has disconnected!" << std::endl;
+            } else {
+                std::cout << "Host has ended the game!" << std::endl;
+            }
+            running = false;
+        }
+    } else {
+        int roll = rollDice();
+        std::cout << "\tRoll was " << roll << std::endl;
+        if (isHome(onTurn) && roll != 6) {
+            for (int i = 0; i < 2; i++) {
+                std::cout << "\t" << onTurn->getName() << " has all figures home rolling again." << std::endl;
+                roll = rollDice();
+                std::cout << "\tRoll was " << roll << ", total is " << roll << std::endl;
+                if (roll == 6) {
+                    break;
+                }
             }
         }
-    }
-    if (roll == 6) {
-        // do a second roll
-        std::cout << "\tSince roll was 6 rolling again" << std::endl;
-        int roll2 = rollDice();
-        roll += roll2;
-        std::cout << "\tRoll was " << roll2 << ", total is " << roll << std::endl;
-    }
-    // if player has any moves make him select (show wich figures can move)
-    if (hasMoves(roll)) {
-        // move this to a method
-        int f = getFigureToMove(roll);
-        if (f == -1) {
-            return;
+        if (roll == 6) {
+            // do a second roll
+            std::cout << "\tSince roll was 6 rolling again" << std::endl;
+            int roll2 = rollDice();
+            roll += roll2;
+            std::cout << "\tRoll was " << roll2 << ", total is " << roll << std::endl;
         }
-        Figure* figure = onTurn->getFigure(f - 1);
-        while (!hasMoves(figure, roll)) {
-            std::cout << "\tFigure" << figure->getId() << " has no moves" << std::endl;
-            f = getFigureToMove(roll);
+        // if player has any moves make him select (show wich figures can move)
+        if (hasMoves(roll)) {
+            // move this to a method
+            int f = getFigureToMove(roll);
             if (f == -1) {
                 return;
             }
-            figure = onTurn->getFigure(f - 1);
+            Figure* figure = onTurn->getFigure(f - 1);
+            while (!hasMoves(figure, roll)) {
+                std::cout << "\tFigure" << figure->getId() << " has no moves" << std::endl;
+                f = getFigureToMove(roll);
+                if (f == -1) {
+                    return;
+                }
+                figure = onTurn->getFigure(f - 1);
+            }
+            move = {onTurn->getId(), figure->getId(), roll};
+            moveFigure(figure, roll, false);
+            this->board->print();
+        } else {
+            std::cout << "\t" << onTurn->getName() << " has no moves." << std::endl;
         }
-        move = {onTurn->getId(), figure->getId(), roll};
-        moveFigure(figure, roll, false);
-        this->print();
-    } else {
-        std::cout << "\t" << onTurn->getName() << " has no moves." << std::endl;
+        if (isEnd(onTurn)) {
+            running = false;
+            std::cout << "\t" << onTurn->getName() << " won the game" << std::endl;
+            return;
+        }
+        if (connection != nullptr) {
+            connection->sendMove(&move);
+        }
+        // set the next player on turn
+        nextPlayerOnTurn();
     }
-    if (isEnd(onTurn)) {
-        running = false;
-        std::cout << "\t" << onTurn->getName() << " won the game" << std::endl;
-        return;
-    }
-    if (connection != nullptr) {
-        connection->sendMove(&move);
-    }
-    // set the next player on turn
-    nextPlayerOnTurn();
 }
 
 int Clovece::getFigureToMove(int roll) {
