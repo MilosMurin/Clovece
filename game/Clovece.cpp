@@ -170,7 +170,7 @@ void Clovece::doTurn() {
             for (int i = 0; i < 2; i++) {
                 std::cout << "\t" << onTurn->getName() << " has all figures home rolling again." << std::endl;
                 roll = rollDice();
-                std::cout << "\tRoll was " << roll << ", total is " << roll << std::endl;
+                std::cout << "\tRoll was " << roll << std::endl;
                 if (roll == 6) {
                     break;
                 }
@@ -369,9 +369,9 @@ void Clovece::print() {
     sprintf(p2, "%27s", ("[" + players[1]->getName() + "]").c_str());
     sprintf(p3, "%-27s", ("[" + players[2]->getName() + "]").c_str());
     sprintf(p4, "%27s", ("[" + players[3]->getName() + "]").c_str());
-    cout << p1 << p2 << endl;
+    cout << p1 << p4 << endl;
     board->print();
-    cout << p3 << p4 << endl;
+    cout << p2 << p3 << endl;
 }
 
 void Clovece::nameBots() {

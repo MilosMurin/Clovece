@@ -88,28 +88,27 @@ Connection::Connection(bool host, string ip, unsigned int port) :
         struct hostent* server = gethostbyname(this->ip.c_str());
         if (server == nullptr) {
             std::cout << "Server does not exist" << std::endl;
-            return;
-        }
+        } else {
 
-        //vytvorenie socketu <sys/socket.h>
-        comSocket = socket(AF_INET, SOCK_STREAM, 0);
-        if (comSocket < 0) {
-            std::cout << "Error when creating socket" << std::endl;
-            return;
-        }
+            //vytvorenie socketu <sys/socket.h>
+            comSocket = socket(AF_INET, SOCK_STREAM, 0);
+            if (comSocket < 0) {
+                std::cout << "Error when creating socket" << std::endl;
+            } else {
+                //definovanie adresy servera <arpa/inet.h>
+                struct sockaddr_in serverAddress{};
+                bzero((char*) &serverAddress, sizeof(serverAddress));
+                serverAddress.sin_family = AF_INET;
+                bcopy((char*) server->h_addr, (char*) &serverAddress.sin_addr.s_addr, server->h_length);
+                serverAddress.sin_port = htons(this->port);
 
-        //definovanie adresy servera <arpa/inet.h>
-        struct sockaddr_in serverAddress{};
-        bzero((char*) &serverAddress, sizeof(serverAddress));
-        serverAddress.sin_family = AF_INET;
-        bcopy((char*) server->h_addr, (char*) &serverAddress.sin_addr.s_addr, server->h_length);
-        serverAddress.sin_port = htons(this->port);
-
-        if (connect(comSocket, (struct sockaddr*) &serverAddress, sizeof(serverAddress)) < 0) {
-            std::cout << "Error with connection" << std::endl;
-            return;
+                if (connect(comSocket, (struct sockaddr*) &serverAddress, sizeof(serverAddress)) < 0) {
+                    std::cout << "Error with connection" << std::endl;
+                } else {
+                    send(comSocket, name.c_str(), name.length(), 0);
+                }
+            }
         }
-        send(comSocket, name.c_str(), name.length(), 0);
     }
 }
 
