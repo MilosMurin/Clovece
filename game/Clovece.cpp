@@ -145,16 +145,18 @@ void Clovece::doTurn() {
                 std::cout << response.getIntValue() << std::endl;
                 Move movePtr{response.getIntValue()};
                 moveFigure(movePtr);
-            } else if (response.isEnd()) {
+            } else if (response.isEnd() || response.getValue().empty()) {
                 if (connection->isHost()) {
                     std::cout << "Player has disconnected!" << std::endl;
                 } else {
                     std::cout << "Host has ended the game!" << std::endl;
                 }
                 running = false;
+                break;
             }
         }
     } else {
+        this->print();
         std::cout << onTurn->getName() << " is a local player." << std::endl;
         int roll = rollDice();
         std::cout << "\tRoll was " << roll << std::endl;
@@ -221,7 +223,6 @@ int Clovece::getFigureToMove(int roll) {
             }
         }
     } else {
-        this->print();
         std::cout << "\tChoose a figure to move [";
         for (int i = 0; i < 4; i++) {
             if(hasMoves(onTurn->getFigure(i),roll))

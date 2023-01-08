@@ -21,7 +21,7 @@ int main() {
 
     std::cout << "Hello welcome to Clovece :)" << std::endl;
 
-    // TODO: Name choosing, figure name choosing
+    // TODO: Name sending, more inputs
 
     int game = 0;
     while (game == 0) {

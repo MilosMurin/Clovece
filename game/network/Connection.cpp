@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <iostream>
+#include <csignal>
 
 Connection::Connection(bool host, string ip, unsigned int port) :
         host(host), ip(std::move(ip)), port(port), mutexRun(new mutex()), mutexRead(new mutex()),
@@ -121,6 +122,7 @@ void Connection::writeStringToSend(string str) {
 }
 
 void Connection::sendString() {
+    signal(SIGPIPE, nullptr);
     bool runWrite = true;
     while (runWrite) {
         std::unique_lock<std::mutex> loc(*mutexWrite);
@@ -175,6 +177,7 @@ void Connection::sendPlayer(Player* player) {
 }
 
 void Connection::readFromSocket() {
+    signal(SIGPIPE, nullptr);
     bool runRead = true;
     while (runRead) {
         if (host) {
