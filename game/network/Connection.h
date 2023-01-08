@@ -23,8 +23,6 @@ private:
     bool run = true;
     mutex* mutexRun;
 
-    char buffer[BUFFER_SIZE] = { 0 };
-
     int comSocket = 0;
     int sockets[4]{};
 

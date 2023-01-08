@@ -196,12 +196,14 @@ void Connection::readFromSocket() {
         if (host) {
             for (int socket: sockets) {
                 if (socket > 0) {
+                    char buffer[BUFFER_SIZE] = { 0 };
                     read(socket, buffer, BUFFER_SIZE);
                     readString(buffer);
                 }
             }
         } else {
             if (comSocket > 0) {
+                char buffer[BUFFER_SIZE] = { 0 };
                 read(comSocket, buffer, BUFFER_SIZE);
                 readString(buffer);
             }
