@@ -23,8 +23,6 @@ int main() {
 
     std::cout << "Hello welcome to Clovece :)" << std::endl;
 
-    // TODO: Name sending
-
     int game = 0;
     while (game == 0) {
         std::cout << "Would you like to play [1] a singleplayer game or [2] a multiplayer game" << std::endl;
@@ -153,12 +151,14 @@ int main() {
                 if (con->isConnected() >= 1) {
                     clovece->setConnection(con);
                     clovece->getPlayer(1)->setBot(false);
+                    clovece->getPlayer(1)->setName(name);
                     for (int i = 2; i <= 1 + con->isConnected(); i++) {
                         clovece->getPlayer(i)->setBot(false);
                         clovece->getPlayer(i)->setIsOnline(true);
                         clovece->getPlayer(i)->setName(con->getName(i));
                     }
                     cont = false;
+                    clovece->nameBots();
                     con->writeStringToSend(clovece->playersToWeb());
                 } else {
                     std::cout << "Nobody connected. Try again? [Y/N]" << std::endl;
@@ -221,6 +221,7 @@ int main() {
                     response.setValue(con->getReceived());
                     con->getWriteMove()->notify_one();
                     loc.unlock();
+//                    std::cout << "Received: " << response.getValue() << std::endl;
                     clovece->loadPlayersFromWeb(response.getValue());
                     connected = true;
                 } else {
@@ -248,7 +249,7 @@ int main() {
 string getName(const string& prefix) {
     std::string name;
     while (name.empty()) {
-        if (!prefix.empty()) {
+        if (prefix.empty()) {
             std::cout << "Chose your name" << std::endl;
         } else {
             std::cout << prefix << " chose your name" << std::endl;

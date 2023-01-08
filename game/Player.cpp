@@ -34,7 +34,7 @@ Figure* Player::getFigure(int i) {
 }
 
 string Player::toWeb() const{
-    string s = this->name;
+    string s = this->getName();
     for (auto& figure: figures) {
         s += "|" + figure->toWeb();
     }

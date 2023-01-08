@@ -1,6 +1,6 @@
 #pragma once
 
-#include "borad/Board.h"
+#include "board/Board.h"
 #include "Player.h"
 #include "network/Move.h"
 #include "network/Connection.h"

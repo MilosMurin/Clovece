@@ -6,7 +6,7 @@
 #include <mutex>
 #include <condition_variable>
 #include "Move.h"
-#include "../borad/Board.h"
+#include "../board/Board.h"
 #include "../Player.h"
 
 using namespace std;
@@ -84,6 +84,10 @@ public:
     void setName(const string& name);
 
     const string& getName(int i) const;
+
+    thread* getReadThread() const;
+
+    thread* getWriteThread() const;
 };
 
 class Response {

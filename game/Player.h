@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "borad/Figure.h"
+#include "board/Figure.h"
 
 using namespace std;
 

@@ -14,6 +14,8 @@ Connection::Connection(bool host, string ip, unsigned int port) :
         mutexWrite(new mutex()), writeMove(new condition_variable()), playMove(new condition_variable()),
         writeMoveToSend(new condition_variable()), sendMoveCond(new condition_variable()) {
 
+    readThread = new thread([this]() -> void { this->readFromSocket(); });
+    writeThread = new thread([this]() -> void { this->sendString(); });
     if (this->host) {
         int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (serverSocket < 0) {
@@ -59,7 +61,7 @@ Connection::Connection(bool host, string ip, unsigned int port) :
                     response.setValue(received);
                     writeMove->notify_one();
                     loc.unlock();
-                    std::cout << "Received name " << response.getValue() << std::endl;
+//                    std::cout << "Received name " << response.getValue() << std::endl;
                     names[i] = response.getValue();
                 }
                 if (sockets[i] < 0) {
@@ -109,8 +111,6 @@ Connection::Connection(bool host, string ip, unsigned int port) :
         }
         send(comSocket, name.c_str(), name.length(), 0);
     }
-    readThread = new thread([this]() -> void { this->readFromSocket(); });
-    writeThread = new thread([this]() -> void { this->sendString(); });
 }
 
 Connection::~Connection() {
@@ -121,17 +121,20 @@ Connection::~Connection() {
     delete playMove;
     delete writeMoveToSend;
     delete sendMoveCond;
+    delete readThread;
+    delete writeThread;
 }
 
 void Connection::writeStringToSend(string str) {
     std::unique_lock<std::mutex> loc(*mutexWrite);
     while (toSend != "-") {
-//        std::cout << "Still unsend string present" << std::endl;
+        std::cout << "Still unsend string present" << std::endl;
         writeMoveToSend->wait(loc);
     }
     toSend = std::move(str);
     sendMoveCond->notify_one();
     loc.unlock();
+//    std::cout << "String " + toSend << " written" << std::endl;
 }
 
 void Connection::sendString() {
@@ -143,6 +146,7 @@ void Connection::sendString() {
 //            std::cout << "Nothing to send" << std::endl;
             sendMoveCond->wait(loc);
         }
+//        std::cout << "Sending " << toSend << std::endl;
         if (toSend.length() < BUFFER_SIZE) {
             if (comSocket > 0) {
                 send(comSocket, toSend.c_str(), toSend.length(), 0);
@@ -280,6 +284,14 @@ void Connection::setName(const string& name) {
 
 const string& Connection::getName(int i) const {
     return names[i];
+}
+
+thread* Connection::getReadThread() const {
+    return readThread;
+}
+
+thread* Connection::getWriteThread() const {
+    return writeThread;
 }
 
 Response::Response() = default;

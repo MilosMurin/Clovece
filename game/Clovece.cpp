@@ -35,11 +35,9 @@ void Clovece::setup() {
             board->getHome(player->getId(), i)->setFigure(player->getFigure(i));
         }
     }
-    print();
 }
 
 void Clovece::start() {
-    nameBots();
     running = true;
     while (running) {
         doTurn();
@@ -47,6 +45,8 @@ void Clovece::start() {
             running = false;
         }
     }
+    connection->getReadThread()->join();
+    connection->getWriteThread()->join();
 }
 
 int Clovece::rollDice() {
@@ -125,6 +125,10 @@ bool Clovece::moveFigure(Figure* figure, int amount, bool test) {
 }
 
 void Clovece::doTurn() {
+    if (onTurn->isBot()) {
+        chrono::seconds sec(1);
+        this_thread::sleep_for(sec);
+    }
     Move move;
     std::cout << onTurn->getName() << " is on turn." << std::endl;
     if (onTurn->isOnline()) {
@@ -141,9 +145,10 @@ void Clovece::doTurn() {
             connection->setReceived("-");
             connection->getWriteMove()->notify_one();
             loc.unlock();
+//            std::cout << "Received: [" << response.getValue() << "]" << std::endl;
 
             if (response.isMove()) {
-                std::cout << response.getIntValue() << std::endl;
+//                std::cout << response.getIntValue() << std::endl;
                 Move movePtr{response.getIntValue()};
                 moveFigure(movePtr);
             } else if (response.isEnd() || response.getValue().empty()) {
@@ -378,7 +383,7 @@ void Clovece::nameBots() {
 
 void Clovece::loadPlayersFromWeb(string str) {
     stringstream strstr{str};
-    for (auto& player : players) {
+    for (auto& player: players) {
         string s;
         getline(strstr, s, ';');
         if (player->getId() != playerId) {
@@ -390,7 +395,7 @@ void Clovece::loadPlayersFromWeb(string str) {
 string Clovece::playersToWeb() {
     string s;
     for (auto& player: players) {
-        s += player->getName() + ";";
+        s += player->toWeb() + ";";
     }
     return s;
 }
