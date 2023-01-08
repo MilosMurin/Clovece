@@ -41,23 +41,24 @@ Connection::Connection(bool host, string ip, unsigned int port) :
                 struct sockaddr_in clientAddress{};
                 socklen_t clientAddressLength = sizeof(clientAddress);
                 sockets[i] = accept(serverSocket, (struct sockaddr*) &clientAddress, &clientAddressLength);
-                std::cout << "A player wants to connect to your game do you accept them? [Y/N]" << std::endl;
+                std::cout << "A player wants to connect to your game do you accept them? [y/n]" << std::endl;
                 string s;
                 cin >> s;
-                if (s == "N") {
+                if (s == "N" || s == "n" || s == "no" || s == "No") {
                     close(sockets[i]);
                 } else {
                     connected = true;
                     send(sockets[i], to_string(idToSend++).c_str(), 1, 0);
+                    // send host player name
                 }
                 if (sockets[i] < 0) {
                     std::cout << "Nastala chyba pri spojeni" << std::endl;
                 }
                 if (i < 3) {
-                    std::cout << "Do you want to continue accepting players? [Y/N]" << std::endl;
+                    std::cout << "Do you want to continue accepting players? [y/n]" << std::endl;
                     string s2;
                     cin >> s2;
-                    if (s2 == "N") {
+                    if (s2 == "N" || s2 == "n" || s2 == "no" || s2 == "No") {
                         cont = false;
                     }
                 }

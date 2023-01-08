@@ -21,14 +21,21 @@ int main() {
 
     std::cout << "Hello welcome to Clovece :)" << std::endl;
 
-    // TODO: Name sending, more inputs
+    // TODO: Name sending
 
     int game = 0;
     while (game == 0) {
         std::cout << "Would you like to play [1] a singleplayer game or [2] a multiplayer game" << std::endl;
         string str;
         cin >> str;
-        int s = atoi(str.c_str());
+        int s;
+        if (str == "s" || str == "singleplayer") {
+            s = 1;
+        } else if (str == "m" || str == "multiplayer") {
+            s = 2;
+        } else {
+            s = atoi(str.c_str());
+        }
         if (s > 0 && s < 3) {
             game = s;
         } else {
@@ -105,7 +112,14 @@ int main() {
             std::cout << "Would you like to [1] host the game or [2] join someones game" << std::endl;
             string str;
             cin >> str;
-            int s = atoi(str.c_str());
+            int s;
+            if (str == "h" || str == "host") {
+                s = 1;
+            } else if (str == "j" || str == "join") {
+                s = 2;
+            } else {
+                s = atoi(str.c_str());
+            }
             if (s > 0 && s < 3) {
                 host = s;
             } else {
@@ -144,7 +158,7 @@ int main() {
                     std::cout << "Nobody connected. Try again? [Y/N]" << std::endl;
                     string s2;
                     cin >> s2;
-                    if (s2 == "N") {
+                    if (s2 == "N" || s2 == "n" || s2 == "no" || s2 == "No") {
                         cont = false;
                     }
                 }
