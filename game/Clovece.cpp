@@ -41,8 +41,10 @@ void Clovece::start() {
     running = true;
     while (running) {
         doTurn();
-        if (!connection->shouldRun()) {
-            running = false;
+        if (connection != nullptr) {
+            if (!connection->shouldRun()) {
+                running = false;
+            }
         }
     }
     connection->getReadThread()->join();
@@ -366,8 +368,8 @@ void Clovece::print() {
     char p3[30];
     char p4[30];
     sprintf(p1, "%-27s", ("[" + players[0]->getName() + "]").c_str());
-    sprintf(p2, "%27s", ("[" + players[1]->getName() + "]").c_str());
-    sprintf(p3, "%-27s", ("[" + players[2]->getName() + "]").c_str());
+    sprintf(p2, "%-27s", ("[" + players[1]->getName() + "]").c_str());
+    sprintf(p3, "%27s", ("[" + players[2]->getName() + "]").c_str());
     sprintf(p4, "%27s", ("[" + players[3]->getName() + "]").c_str());
     cout << p1 << p4 << endl;
     board->print();
