@@ -67,10 +67,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /tmp/tmp.aXx1QHUPr3
+CMAKE_SOURCE_DIR = /home/gres2/SP
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /tmp/tmp.aXx1QHUPr3/cmake-build-debug
+CMAKE_BINARY_DIR = /home/gres2/SP/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -99,9 +99,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.aXx1QHUPr3/cmake-build-debug/CMakeFiles /tmp/tmp.aXx1QHUPr3/cmake-build-debug//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/gres2/SP/cmake-build-debug/CMakeFiles /home/gres2/SP/cmake-build-debug//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.aXx1QHUPr3/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/gres2/SP/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -141,6 +141,33 @@ Clovece: cmake_check_build_system
 Clovece/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clovece.dir/build.make CMakeFiles/Clovece.dir/build
 .PHONY : Clovece/fast
+
+debug_leaks/debug_new.o: debug_leaks/debug_new.cpp.o
+
+.PHONY : debug_leaks/debug_new.o
+
+# target to build an object file
+debug_leaks/debug_new.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clovece.dir/build.make CMakeFiles/Clovece.dir/debug_leaks/debug_new.cpp.o
+.PHONY : debug_leaks/debug_new.cpp.o
+
+debug_leaks/debug_new.i: debug_leaks/debug_new.cpp.i
+
+.PHONY : debug_leaks/debug_new.i
+
+# target to preprocess a source file
+debug_leaks/debug_new.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clovece.dir/build.make CMakeFiles/Clovece.dir/debug_leaks/debug_new.cpp.i
+.PHONY : debug_leaks/debug_new.cpp.i
+
+debug_leaks/debug_new.s: debug_leaks/debug_new.cpp.s
+
+.PHONY : debug_leaks/debug_new.s
+
+# target to generate assembly for a file
+debug_leaks/debug_new.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clovece.dir/build.make CMakeFiles/Clovece.dir/debug_leaks/debug_new.cpp.s
+.PHONY : debug_leaks/debug_new.cpp.s
 
 game/Clovece.o: game/Clovece.cpp.o
 
@@ -331,6 +358,60 @@ game/network/Move.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clovece.dir/build.make CMakeFiles/Clovece.dir/game/network/Move.cpp.s
 .PHONY : game/network/Move.cpp.s
 
+graphic/Graphic.o: graphic/Graphic.cpp.o
+
+.PHONY : graphic/Graphic.o
+
+# target to build an object file
+graphic/Graphic.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clovece.dir/build.make CMakeFiles/Clovece.dir/graphic/Graphic.cpp.o
+.PHONY : graphic/Graphic.cpp.o
+
+graphic/Graphic.i: graphic/Graphic.cpp.i
+
+.PHONY : graphic/Graphic.i
+
+# target to preprocess a source file
+graphic/Graphic.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clovece.dir/build.make CMakeFiles/Clovece.dir/graphic/Graphic.cpp.i
+.PHONY : graphic/Graphic.cpp.i
+
+graphic/Graphic.s: graphic/Graphic.cpp.s
+
+.PHONY : graphic/Graphic.s
+
+# target to generate assembly for a file
+graphic/Graphic.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clovece.dir/build.make CMakeFiles/Clovece.dir/graphic/Graphic.cpp.s
+.PHONY : graphic/Graphic.cpp.s
+
+graphic/Settings.o: graphic/Settings.cpp.o
+
+.PHONY : graphic/Settings.o
+
+# target to build an object file
+graphic/Settings.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clovece.dir/build.make CMakeFiles/Clovece.dir/graphic/Settings.cpp.o
+.PHONY : graphic/Settings.cpp.o
+
+graphic/Settings.i: graphic/Settings.cpp.i
+
+.PHONY : graphic/Settings.i
+
+# target to preprocess a source file
+graphic/Settings.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clovece.dir/build.make CMakeFiles/Clovece.dir/graphic/Settings.cpp.i
+.PHONY : graphic/Settings.cpp.i
+
+graphic/Settings.s: graphic/Settings.cpp.s
+
+.PHONY : graphic/Settings.s
+
+# target to generate assembly for a file
+graphic/Settings.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clovece.dir/build.make CMakeFiles/Clovece.dir/graphic/Settings.cpp.s
+.PHONY : graphic/Settings.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -367,6 +448,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... Clovece"
+	@echo "... debug_leaks/debug_new.o"
+	@echo "... debug_leaks/debug_new.i"
+	@echo "... debug_leaks/debug_new.s"
 	@echo "... game/Clovece.o"
 	@echo "... game/Clovece.i"
 	@echo "... game/Clovece.s"
@@ -388,6 +472,12 @@ help:
 	@echo "... game/network/Move.o"
 	@echo "... game/network/Move.i"
 	@echo "... game/network/Move.s"
+	@echo "... graphic/Graphic.o"
+	@echo "... graphic/Graphic.i"
+	@echo "... graphic/Graphic.s"
+	@echo "... graphic/Settings.o"
+	@echo "... graphic/Settings.i"
+	@echo "... graphic/Settings.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
