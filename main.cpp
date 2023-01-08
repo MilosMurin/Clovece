@@ -1,6 +1,9 @@
 #include <iostream>
 #include <random>
 #include "game/Clovece.h"
+#ifdef DEBUG
+#include "debug_new.h"
+#endif
 
 string getName(const string& prefix);
 
