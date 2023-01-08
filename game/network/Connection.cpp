@@ -59,6 +59,7 @@ Connection::Connection(bool host, string ip, unsigned int port) :
                         playMove->wait(loc);
                     }
                     response.setValue(received);
+                    received = "-";
                     writeMove->notify_one();
                     loc.unlock();
 //                    std::cout << "Received name " << response.getValue() << std::endl;

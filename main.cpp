@@ -198,6 +198,7 @@ int main() {
                             con->getPlayMove()->wait(loc);
                         }
                         response.setValue(con->getReceived());
+                        con->setReceived("-");
                         con->getWriteMove()->notify_one();
                         loc.unlock();
                         if (response.isNum()) {
@@ -207,7 +208,6 @@ int main() {
                                 clovece->setPlayerId(id);
                                 clovece->getPlayer(id)->setIsOnline(false);
                                 clovece->getPlayer(id)->setName(name);
-                                con->setReceived("-");
                             }
                         }
                     }
@@ -219,6 +219,7 @@ int main() {
                         con->getPlayMove()->wait(loc);
                     }
                     response.setValue(con->getReceived());
+                    con->setReceived("-");
                     con->getWriteMove()->notify_one();
                     loc.unlock();
 //                    std::cout << "Received: " << response.getValue() << std::endl;

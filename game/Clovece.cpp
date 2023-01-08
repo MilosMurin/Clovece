@@ -145,7 +145,7 @@ void Clovece::doTurn() {
             connection->setReceived("-");
             connection->getWriteMove()->notify_one();
             loc.unlock();
-//            std::cout << "Received: [" << response.getValue() << "]" << std::endl;
+            std::cout << "Received: [" << response.getValue() << "]" << std::endl;
 
             if (response.isMove()) {
 //                std::cout << response.getIntValue() << std::endl;
