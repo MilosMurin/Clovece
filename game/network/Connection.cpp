@@ -61,7 +61,6 @@ Connection::Connection(bool host, string ip, unsigned int port) :
                     loc.unlock();
                     std::cout << "Received name " << response.getValue() << std::endl;
                     names[i] = response.getValue();
-                    // TODO: Set name in game
                 }
                 if (sockets[i] < 0) {
                     std::cout << "Error with connection" << std::endl;

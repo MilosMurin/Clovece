@@ -211,6 +211,7 @@ int main() {
                             }
                         }
                     }
+                    con->writeStringToSend(name);
                     Response response{};
                     std::unique_lock<std::mutex> loc(*con->getMutexRead());
                     while (con->getReceived() == "-") {
