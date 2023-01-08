@@ -1,6 +1,7 @@
 #include <random>
 #include <iostream>
 #include "Clovece.h"
+#include <sstream>
 
 using namespace std;
 
@@ -34,7 +35,7 @@ void Clovece::setup() {
             board->getHome(player->getId(), i)->setFigure(player->getFigure(i));
         }
     }
-   print();
+    print();
 }
 
 void Clovece::start() {
@@ -225,16 +226,16 @@ int Clovece::getFigureToMove(int roll) {
     } else {
         std::cout << "\tChoose a figure to move [";
         for (int i = 0; i < 4; i++) {
-            if(hasMoves(onTurn->getFigure(i),roll))
+            if (hasMoves(onTurn->getFigure(i), roll))
                 cout << onTurn->getFigure(i)->getId();
             int ableToMove = 0;
             for (int j = 0; j < 4; j++) {
-                if(hasMoves(onTurn->getFigure(j),roll))
-                ableToMove++;
+                if (hasMoves(onTurn->getFigure(j), roll))
+                    ableToMove++;
             }
-            if(i < 3 && hasMoves(onTurn->getFigure(i),roll)){
-                if(ableToMove != 1 )
-                cout << " ";
+            if (i < 3 && hasMoves(onTurn->getFigure(i), roll)) {
+                if (ableToMove != 1)
+                    cout << " ";
             }
         }
         cout << "]" << std::endl;
@@ -369,8 +370,27 @@ void Clovece::print() {
 }
 
 void Clovece::nameBots() {
-    for (auto player:players) {
+    for (auto player: players) {
         if (player->isBot())
             player->setName("AI " + to_string(player->getId()));
     }
+}
+
+void Clovece::loadPlayersFromWeb(string str) {
+    stringstream strstr{str};
+    for (auto& player : players) {
+        string s;
+        getline(strstr, s, ';');
+        if (player->getId() != playerId) {
+            player->loadFromWeb(s);
+        }
+    }
+}
+
+string Clovece::playersToWeb() {
+    string s;
+    for (auto& player: players) {
+        s += player->getName() + ";";
+    }
+    return s;
 }

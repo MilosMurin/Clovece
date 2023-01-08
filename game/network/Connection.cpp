@@ -34,7 +34,7 @@ Connection::Connection(bool host, string ip, unsigned int port) :
 
         listen(serverSocket, 10);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 2; i <= 4; i++) {
             bool connected = false;
             bool cont = true;
             while (!connected) {
@@ -50,6 +50,18 @@ Connection::Connection(bool host, string ip, unsigned int port) :
                     connected = true;
                     send(sockets[i], to_string(idToSend++).c_str(), 1, 0);
                     // send host player name
+                    Response response{};
+                    std::unique_lock<std::mutex> loc(*mutexRead);
+                    while (received == "-") {
+                        std::cout << "Waiting for player to respond with their name" << std::endl;
+                        playMove->wait(loc);
+                    }
+                    response.setValue(received);
+                    writeMove->notify_one();
+                    loc.unlock();
+                    std::cout << "Received name " << response.getValue() << std::endl;
+                    names[i] = response.getValue();
+                    // TODO: Set name in game
                 }
                 if (sockets[i] < 0) {
                     std::cout << "Error with connection" << std::endl;
@@ -96,6 +108,7 @@ Connection::Connection(bool host, string ip, unsigned int port) :
             std::cout << "Error with connection" << std::endl;
             return;
         }
+        send(comSocket, name.c_str(), name.length(), 0);
     }
     readThread = new thread([this]() -> void { this->readFromSocket(); });
     writeThread = new thread([this]() -> void { this->sendString(); });
@@ -171,10 +184,6 @@ void Connection::sendMove(Move* move) {
 
 void Connection::sendEnd() {
     writeStringToSend("end");
-}
-
-void Connection::sendPlayer(Player* player) {
-    writeStringToSend(player->toWeb());
 }
 
 void Connection::readFromSocket() {
@@ -262,8 +271,16 @@ void Connection::setReceived(const string& received) {
     this->received = received;
 }
 
-bool Connection::shouldRun() {
+bool Connection::shouldRun() const {
     return run;
+}
+
+void Connection::setName(const string& name) {
+    this->name = name;
+}
+
+const string& Connection::getName(int i) const {
+    return names[i];
 }
 
 Response::Response() = default;

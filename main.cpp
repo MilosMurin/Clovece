@@ -156,8 +156,10 @@ int main() {
                     for (int i = 2; i <= 1 + con->isConnected(); i++) {
                         clovece->getPlayer(i)->setBot(false);
                         clovece->getPlayer(i)->setIsOnline(true);
+                        clovece->getPlayer(i)->setName(con->getName(i));
                     }
                     cont = false;
+                    con->writeStringToSend(clovece->playersToWeb());
                 } else {
                     std::cout << "Nobody connected. Try again? [Y/N]" << std::endl;
                     string s2;
@@ -200,15 +202,25 @@ int main() {
                         loc.unlock();
                         if (response.isNum()) {
                             if (response.getIntValue() <= 4) {
-                                // TODO: receive all player names and ids
                                 id = response.getIntValue();
                                 std::cout << "Received id: " << id << std::endl;
                                 clovece->setPlayerId(id);
                                 clovece->getPlayer(id)->setIsOnline(false);
+                                clovece->getPlayer(id)->setName(name);
                                 con->setReceived("-");
                             }
                         }
                     }
+                    Response response{};
+                    std::unique_lock<std::mutex> loc(*con->getMutexRead());
+                    while (con->getReceived() == "-") {
+                        std::cout << "Waiting for host to start the game" << std::endl;
+                        con->getPlayMove()->wait(loc);
+                    }
+                    response.setValue(con->getReceived());
+                    con->getWriteMove()->notify_one();
+                    loc.unlock();
+                    clovece->loadPlayersFromWeb(response.getValue());
                     connected = true;
                 } else {
                     std::cout << "Connection failed! Try again, or type -1 to end the program." << std::endl;
@@ -243,8 +255,12 @@ string getName(const string& prefix) {
         cin >> name;
         if (name.empty()) {
             std::cout << "Name cannot be empty" << std::endl;
-        } else if (name.find('|')) {
-            std::cout << "Name cannot contain the | symbol" << std::endl;
+        } else if (name.find('|') != -1 && name.find(';') != -1 && name.find(',') != -1 &&
+                name.find('/') != -1 && name.find('\\') != -1) {
+            std::cout << "Name cannot contain any special symbol" << std::endl;
+            name = "";
+        } else if (name.length() > 20) {
+            std::cout << "Name cannot be longer than 20 characters" << std::endl;
             name = "";
         }
     }

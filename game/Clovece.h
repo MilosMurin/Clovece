@@ -78,4 +78,8 @@ public:
     Connection* getConnection() const;
 
     void setConnection(Connection* connection);
+
+    void loadPlayersFromWeb(string str);
+
+    string playersToWeb();
 };

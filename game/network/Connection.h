@@ -41,6 +41,8 @@ private:
     condition_variable* writeMoveToSend;
     condition_variable* sendMoveCond;
 
+    string name;
+    string names[5];
 
     // 2 vlakna jedno na citanie a jedno na zapisovanie
 
@@ -54,8 +56,6 @@ public:
     void sendMove(Move* move);
 
     void sendEnd();
-
-    void sendPlayer(Player* player);
 
     void readFromSocket();
 
@@ -79,7 +79,11 @@ public:
 
     void setReceived(const string& received);
 
-    bool shouldRun();
+    bool shouldRun() const;
+
+    void setName(const string& name);
+
+    const string& getName(int i) const;
 };
 
 class Response {
