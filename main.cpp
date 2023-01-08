@@ -2,6 +2,8 @@
 #include <random>
 #include "game/Clovece.h"
 
+string getName(const string& prefix);
+
 int main() {
 
     std::random_device rd;
@@ -60,6 +62,8 @@ int main() {
         if (players == 4) { // give choice for bot ids
             for (int i = 1; i <= 4; i++) {
                 clovece->getPlayer(i)->setBot(false);
+                std::string name = getName("Player " + to_string(i));
+                clovece->getPlayer(i)->setName(name);
             }
         } else if (players == 3) { // give choice for bot ids
             int bot = 0;
@@ -76,6 +80,10 @@ int main() {
             }
             for (int i = 1; i <= 4; i++) {
                 clovece->getPlayer(i)->setBot(bot == i);
+                if (bot != i) {
+                    std::string name = getName("Player " + to_string(i));
+                    clovece->getPlayer(i)->setName(name);
+                }
             }
         } else { // give choice for player ids
             for (int i = 1; i <= players; i++) {
@@ -96,16 +104,12 @@ int main() {
                     }
                 }
                 clovece->getPlayer(player)->setBot(false);
-                std::cout << "Chose your name :" << std::endl;
-                std::string name;
-                cin >> name;
+                std::string name = getName("Player " + to_string(i));
                 clovece->getPlayer(player)->setName(name);
             }
         }
     } else {
-        std::cout << "Chose your name :" << std::endl;
-        std::string name;
-        cin >> name;
+        std::string name = getName("");
 
         int host = 0;
         while (host == 0) {
@@ -196,6 +200,7 @@ int main() {
                         loc.unlock();
                         if (response.isNum()) {
                             if (response.getIntValue() <= 4) {
+                                // TODO: receive all player names and ids
                                 id = response.getIntValue();
                                 std::cout << "Received id: " << id << std::endl;
                                 clovece->setPlayerId(id);
@@ -224,4 +229,24 @@ int main() {
     delete p4;
 
     return 0;
+}
+
+
+string getName(const string& prefix) {
+    std::string name;
+    while (name.empty()) {
+        if (!prefix.empty()) {
+            std::cout << "Chose your name" << std::endl;
+        } else {
+            std::cout << prefix << " chose your name" << std::endl;
+        }
+        cin >> name;
+        if (name.empty()) {
+            std::cout << "Name cannot be empty" << std::endl;
+        } else if (name.find('|')) {
+            std::cout << "Name cannot contain the | symbol" << std::endl;
+            name = "";
+        }
+    }
+    return name;
 }

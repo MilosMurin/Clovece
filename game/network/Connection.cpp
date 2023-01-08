@@ -17,7 +17,7 @@ Connection::Connection(bool host, string ip, unsigned int port) :
     if (this->host) {
         int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (serverSocket < 0) {
-            std::cout << "Nastala chyba pri vytvarani socketu" << std::endl;
+            std::cout << "Error when creating socket" << std::endl;
             return;
         }
 
@@ -28,7 +28,7 @@ Connection::Connection(bool host, string ip, unsigned int port) :
 
 
         if (bind(serverSocket, (struct sockaddr*) &serverAddress, sizeof(serverAddress)) < 0) {
-            std::cout << "Nastala chyba pri bindovani socketu" << std::endl;
+            std::cout << "Error when binding a socket" << std::endl;
             return;
         }
 
@@ -52,7 +52,7 @@ Connection::Connection(bool host, string ip, unsigned int port) :
                     // send host player name
                 }
                 if (sockets[i] < 0) {
-                    std::cout << "Nastala chyba pri spojeni" << std::endl;
+                    std::cout << "Error with connection" << std::endl;
                 }
                 if (i < 3) {
                     std::cout << "Do you want to continue accepting players? [y/n]" << std::endl;
@@ -74,14 +74,14 @@ Connection::Connection(bool host, string ip, unsigned int port) :
         //ziskanie adresy a portu servera <netdb.h>
         struct hostent* server = gethostbyname(this->ip.c_str());
         if (server == nullptr) {
-            std::cout << "Server neexistuje" << std::endl;
+            std::cout << "Server does not exist" << std::endl;
             return;
         }
 
         //vytvorenie socketu <sys/socket.h>
         comSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (comSocket < 0) {
-            std::cout << "Nastala chyba pri vytvarani socketu" << std::endl;
+            std::cout << "Error when creating socket" << std::endl;
             return;
         }
 
@@ -93,7 +93,7 @@ Connection::Connection(bool host, string ip, unsigned int port) :
         serverAddress.sin_port = htons(this->port);
 
         if (connect(comSocket, (struct sockaddr*) &serverAddress, sizeof(serverAddress)) < 0) {
-            std::cout << "Nastala chyba pri pripajani" << std::endl;
+            std::cout << "Error with connection" << std::endl;
             return;
         }
     }
